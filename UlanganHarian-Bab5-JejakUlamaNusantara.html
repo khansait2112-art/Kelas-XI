@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ekspedisi Jejak Ulama</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Dunia game kartun: langit siang, garis tebal, tombol 3D. Satu kolom untuk ponsel;
+     arena (peta atau adegan bos) di atas, kartu aksi di bawah. */
+  --langit:#3a86ff;
+  --langit-2:#7fd8ff;
+  --tinta:#1b1f3b;
+  --kartu:#fffdf3;
+  --kuning:#ffd23f;
+  --merah:#ff5a5f;
+  --benar:#17a05d;
+  --salah:#e23b3b;
+  --soga:#6a3df0;
+  --display:"Lilita One","Arial Rounded MT Bold","Trebuchet MS",sans-serif;
+  --body:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:linear-gradient(180deg,var(--langit) 0%,#4cc0f5 55%,var(--langit-2) 100%) fixed;color:#fff;font-family:var(--body);font-weight:700;font-size:16px;line-height:1.45;-webkit-tap-highlight-color:transparent;overflow-x:hidden}
+body::before,body::after{content:"";position:fixed;left:-200px;right:-200px;height:120px;pointer-events:none;z-index:0;
+  background:radial-gradient(circle at 60px 70px,rgba(255,255,255,.75) 34px,transparent 35px),radial-gradient(circle at 100px 56px,rgba(255,255,255,.75) 44px,transparent 45px),radial-gradient(circle at 146px 74px,rgba(255,255,255,.75) 32px,transparent 33px) repeat-x;background-size:420px 120px;animation:awanjalan 40s linear infinite}
+body::before{top:6%}
+body::after{top:58%;opacity:.55;animation-duration:65s;background-size:560px 120px}
+#app{position:relative;z-index:1;min-height:100%;max-width:560px;margin:0 auto;padding:14px 14px 34px;display:flex;flex-direction:column;gap:12px}
+#app.gempa{animation:gempa .4s}
+#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:50}
+#kilat{position:fixed;inset:0;pointer-events:none;z-index:49;opacity:0}
+h1,h2,h3{font-family:var(--display);font-weight:400;margin:0;text-wrap:balance;line-height:1.08;letter-spacing:.01em;color:#fff;
+  text-shadow:-2px -2px 0 var(--tinta),2px -2px 0 var(--tinta),-2px 2px 0 var(--tinta),2px 2px 0 var(--tinta),0 5px 0 var(--tinta)}
+h1{font-size:2.3rem} h2{font-size:1.6rem} h3{font-size:1.2rem}
+p{margin:0}
+a{color:#fff}
+.kecil{align-self:flex-start;display:inline-block;font-size:.74rem;letter-spacing:.07em;text-transform:uppercase;font-weight:800;color:#fff;background:rgba(27,31,59,.55);padding:3px 10px;border-radius:20px}
+.redup{font-size:.92rem;text-shadow:0 1px 0 rgba(27,31,59,.5)}
+header{display:flex;flex-direction:column;gap:6px}
+.kitab{background:var(--kartu);color:var(--tinta);border:3px solid var(--tinta);border-radius:20px;padding:16px 14px;box-shadow:0 7px 0 var(--tinta);display:flex;flex-direction:column;gap:12px;animation:muncul .35s cubic-bezier(.3,1.5,.6,1)}
+.kitab h2,.kitab h3{color:var(--soga);text-shadow:none}
+.kitab .kecil{background:var(--soga)}
+.kitab a{color:var(--soga)}
+button{font:inherit;cursor:pointer;border:0}
+button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible,summary:focus-visible{outline:4px solid #fff;outline-offset:2px}
+.kitab button:focus-visible,.kitab input:focus-visible,.kitab textarea:focus-visible,.kitab summary:focus-visible{outline-color:var(--soga)}
+.utama{font-family:var(--display);background:var(--kuning);color:var(--tinta);padding:13px 18px;font-size:1.3rem;width:100%;border:3px solid var(--tinta);border-radius:18px;box-shadow:0 6px 0 var(--tinta);letter-spacing:.03em;transition:transform .06s,box-shadow .06s}
+.utama:active{transform:translateY(5px);box-shadow:0 1px 0 var(--tinta)}
+.utama.denyut{animation:denyut 1.1s ease-in-out infinite}
+.utama:disabled{opacity:.5;cursor:not-allowed;animation:none}
+.sekunder{font-family:var(--display);background:#fff;color:var(--tinta);padding:10px 16px;width:100%;border:3px solid var(--tinta);border-radius:16px;box-shadow:0 4px 0 var(--tinta);font-size:1.05rem}
+.sekunder:active{transform:translateY(3px);box-shadow:0 1px 0 var(--tinta)}
+.baris{display:flex;gap:10px;flex-wrap:wrap}
+.baris>*{flex:1 1 120px}
+label{display:flex;flex-direction:column;gap:5px;font-weight:800;font-size:.9rem}
+input,textarea{font:inherit;padding:11px 12px;border-radius:14px;border:3px solid var(--tinta);background:#fff;color:var(--tinta);width:100%}
+textarea{min-height:110px;font-size:.9rem}
+.daftar{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:7px;font-size:.93rem}
+summary{font-family:var(--display);font-size:1.1rem;color:var(--soga);cursor:pointer}
+.galat{color:var(--salah);font-weight:800;font-size:.9rem;min-height:1.2em}
+
+/* layar judul */
+.logo{align-items:center;text-align:center;padding-top:6px}
+.logo h1{font-size:3.1rem}
+.logo h1 span{display:inline-block;animation:lompat 1.6s ease-in-out infinite}
+.logo h1.b{font-size:2.2rem;color:var(--kuning)}
+.lintas{position:relative;height:64px;overflow:hidden}
+.lintas div{position:absolute;top:6px;left:0;width:96px;animation:lintas 5s linear infinite}
+
+/* HUD */
+.hud{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.pil{background:#fff;color:var(--tinta);border:3px solid var(--tinta);border-radius:30px;padding:3px 12px;box-shadow:0 4px 0 var(--tinta);font-family:var(--display);font-size:1.15rem;display:flex;align-items:center;gap:6px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.pil small{font-family:var(--body);font-weight:800;font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;color:var(--soga)}
+.pil.kombo.api{background:var(--kuning);animation:denyut .5s ease-in-out infinite}
+.lambung{display:flex;gap:2px;font-size:1.25rem;line-height:1;color:var(--merah)}
+.lambung i{font-style:normal;display:inline-block}
+.lambung i.rusak{color:#c9cbd6}
+.lambung.baru i.rusak:first-of-type{animation:pecah .5s}
+
+/* adegan bos */
+.laga{position:relative;height:168px;border:3px solid var(--tinta);border-radius:20px;overflow:hidden;background:linear-gradient(180deg,#5b3df5 0%,#b05cff 60%,#ff9bd2 100%);box-shadow:0 6px 0 var(--tinta)}
+.laga::before{content:"";position:absolute;left:-300px;right:0;top:0;bottom:0;background:repeating-linear-gradient(100deg,transparent 0 46px,rgba(255,255,255,.14) 46px 50px);animation:garis .5s linear infinite}
+.laga .pes{position:absolute;left:5%;top:52px;width:104px;animation:ayun 1.2s ease-in-out infinite;z-index:2}
+.laga .pes.kena{animation:guncang .5s}
+.bos{position:absolute;right:7%;top:16px;width:108px;height:84px;background:var(--bw,#8ecae6);border:3px solid var(--tinta);border-radius:52% 48% 46% 54%/62% 60% 40% 38%;box-shadow:inset -9px -9px 0 rgba(0,0,0,.16);animation:bosmasuk .6s cubic-bezier(.3,1.5,.6,1),ngambang 1.8s ease-in-out .6s infinite;z-index:2}
+.bos .mata{position:absolute;top:26px;width:20px;height:22px;background:#fff;border:3px solid var(--tinta);border-radius:50%}
+.bos .mata::after{content:"";position:absolute;left:3px;top:6px;width:8px;height:8px;border-radius:50%;background:var(--tinta);animation:lirik 3s infinite}
+.bos .mata::before{content:"";position:absolute;top:-10px;width:24px;height:5px;background:var(--tinta);border-radius:3px}
+.bos .mata.l{left:22px}.bos .mata.l::before{left:-4px;transform:rotate(20deg)}
+.bos .mata.r{right:22px}.bos .mata.r::before{right:-4px;transform:rotate(-20deg)}
+.bos .mulut{position:absolute;left:50%;bottom:10px;width:30px;height:13px;margin-left:-15px;border:3px solid var(--tinta);border-bottom:0;border-radius:20px 20px 0 0;background:#fff}
+.bos.kena{animation:boskena .5s}
+.bos.kalah{animation:boskalah .9s forwards}
+.bos.jinak .mata::before{display:none}
+.bos.jinak .mulut{border:3px solid var(--tinta);border-top:0;border-radius:0 0 20px 20px;height:11px}
+.hp{position:absolute;right:7%;top:108px;width:108px;height:14px;border:3px solid var(--tinta);border-radius:9px;background:#fff;overflow:hidden;z-index:2}
+.hp i{display:block;height:100%;background:var(--merah);transition:width .45s cubic-bezier(.3,1.4,.6,1)}
+.bosnama{position:absolute;right:0;width:calc(108px + 14%);top:128px;text-align:center;font-family:var(--display);font-size:.95rem;line-height:1.05;z-index:2;text-shadow:-1.5px -1.5px 0 var(--tinta),1.5px -1.5px 0 var(--tinta),-1.5px 1.5px 0 var(--tinta),1.5px 1.5px 0 var(--tinta)}
+.peluru{position:absolute;left:30%;top:58px;font-size:1.9rem;color:var(--kuning);z-index:3;text-shadow:0 0 0 var(--tinta),2px 2px 0 var(--tinta)}
+.petir{position:absolute;right:38%;top:50px;font-size:2rem;color:#fff35c;z-index:3;text-shadow:2px 2px 0 var(--tinta)}
+.cap-besar{position:absolute;left:50%;top:50%;z-index:4;font-family:var(--display);font-size:2.3rem;white-space:nowrap;transform:translate(-50%,-50%) rotate(-8deg);animation:stempel .9s cubic-bezier(.3,1.6,.6,1) forwards;
+  text-shadow:-2px -2px 0 var(--tinta),2px -2px 0 var(--tinta),-2px 2px 0 var(--tinta),2px 2px 0 var(--tinta),0 5px 0 var(--tinta)}
+.cap-besar.ok{color:var(--kuning)}.cap-besar.no{color:#ffb3b3}
+
+/* waktu */
+.waktu-baris{display:flex;align-items:center;gap:8px}
+.waktu{flex:1;height:18px;background:#fff;border:3px solid var(--tinta);border-radius:12px;overflow:hidden;box-shadow:0 3px 0 var(--tinta)}
+.waktu b{display:block;height:100%;width:100%;background:linear-gradient(90deg,#17c964,#b8f03a);transform-origin:left}
+.waktu b.genting{background:var(--merah)}
+.waktu-baris.genting{animation:denyut .5s ease-in-out infinite}
+.detik{font-family:var(--display);font-size:1.3rem;min-width:2.2em;text-align:right;text-shadow:-1.5px -1.5px 0 var(--tinta),1.5px -1.5px 0 var(--tinta),-1.5px 1.5px 0 var(--tinta),1.5px 1.5px 0 var(--tinta);font-variant-numeric:tabular-nums}
+
+/* soal */
+.cap{align-self:flex-start;font-family:var(--display);font-size:.85rem;letter-spacing:.04em;padding:3px 12px;border-radius:20px;background:var(--soga);color:#fff;border:2px solid var(--tinta)}
+.cap.ingat{background:#0aa6c2}
+.kasus{background:#efe9ff;border:2px dashed var(--soga);padding:10px 12px;border-radius:14px;font-size:.95rem;font-weight:700}
+.soal{font-size:1.06rem;font-weight:800;line-height:1.4}
+.pilihan{display:flex;flex-direction:column;gap:10px}
+.pilihan button{text-align:left;padding:10px 12px;background:#fff;color:var(--tinta);border:3px solid var(--tinta);border-radius:16px;box-shadow:0 4px 0 var(--tinta);font-weight:700;display:flex;gap:10px;align-items:center;font-size:.95rem;line-height:1.35;animation:geser .35s cubic-bezier(.3,1.4,.6,1) backwards}
+.pilihan button:nth-child(2){animation-delay:.06s}.pilihan button:nth-child(3){animation-delay:.12s}.pilihan button:nth-child(4){animation-delay:.18s}.pilihan button:nth-child(5){animation-delay:.24s}
+.pilihan button:active{transform:translateY(3px);box-shadow:0 1px 0 var(--tinta)}
+.pilihan .h{flex:none;font-family:var(--display);width:30px;height:30px;border-radius:50%;border:2px solid var(--tinta);display:grid;place-items:center;color:#fff;background:var(--merah)}
+.pilihan button:nth-child(2) .h{background:#3a86ff}.pilihan button:nth-child(3) .h{background:#17a05d}.pilihan button:nth-child(4) .h{background:#ff8c1a}.pilihan button:nth-child(5) .h{background:#a23bf0}
+.pilihan button:disabled{cursor:default;opacity:.55}
+.pilihan button.benar{background:var(--benar);color:#fff;opacity:1;animation:hore .5s}
+.pilihan button.salah{background:var(--salah);color:#fff;opacity:1;animation:guncang .45s}
+.pilihan button.hilang{display:none}
+.bekal{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.bekal button{font-family:var(--display);background:#e7fbff;color:var(--tinta);padding:7px 4px;border:3px solid var(--tinta);border-radius:14px;box-shadow:0 4px 0 var(--tinta);font-size:.92rem;line-height:1.15}
+.bekal button span{display:block;font-family:var(--body);font-weight:800;font-size:.7rem}
+.bekal button:active{transform:translateY(3px);box-shadow:0 1px 0 var(--tinta)}
+.bekal button:disabled{opacity:.4;cursor:not-allowed}
+.bekal button.pasang{background:var(--kuning);opacity:1}
+.ulasan{border-top:3px dashed var(--tinta);padding-top:12px;display:flex;flex-direction:column;gap:10px;animation:muncul .3s}
+.vonis{font-family:var(--display);font-size:1.25rem}.vonis.ok{color:var(--benar)}.vonis.no{color:var(--salah)}
+
+/* peta */
+canvas.langit{width:100%;height:min(60vh,500px);min-height:320px;border:3px solid var(--tinta);border-radius:20px;box-shadow:0 6px 0 var(--tinta);touch-action:none;display:block;background:#1fa3d8;cursor:crosshair}
+.chip{display:flex;gap:6px;flex-wrap:wrap}
+.chip span{background:#fff;color:var(--tinta);border:2px solid var(--tinta);border-radius:20px;padding:1px 10px;font-size:.8rem;font-weight:800}
+.chip span.sudah{background:var(--kuning)}
+#suara{position:relative;z-index:1;display:block;margin:0 auto 18px;min-height:36px;padding:4px 14px;border-radius:20px;background:#fff;border:3px solid var(--tinta);box-shadow:0 4px 0 var(--tinta);font-family:var(--display);font-size:.7rem;color:var(--tinta)}
+.melayang{position:fixed;z-index:60;pointer-events:none;font-family:var(--display);font-size:1.5rem;color:var(--kuning);transform:translate(-50%,-50%);animation:naik 1s ease-out forwards;white-space:nowrap;
+  text-shadow:-2px -2px 0 var(--tinta),2px -2px 0 var(--tinta),-2px 2px 0 var(--tinta),2px 2px 0 var(--tinta)}
+.melayang.besar{font-size:2.3rem;color:#fff}
+
+/* hasil & guru */
+.bintang3{display:flex;justify-content:center;gap:6px;font-size:3.4rem;line-height:1;color:#d9dbe6}
+.bintang3 i{font-style:normal;animation:bintang .5s cubic-bezier(.3,1.8,.6,1) backwards}
+.bintang3 i.on{color:var(--kuning);text-shadow:-2px -2px 0 var(--tinta),2px -2px 0 var(--tinta),-2px 2px 0 var(--tinta),2px 2px 0 var(--tinta)}
+.bintang3 i:nth-child(2){animation-delay:.3s}.bintang3 i:nth-child(3){animation-delay:.6s}
+.nilai-besar{font-family:var(--display);font-size:5rem;line-height:.95;color:var(--soga);font-variant-numeric:tabular-nums;text-align:center}
+.ringkas{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.ringkas div{background:#efe9ff;border:2px solid var(--tinta);border-radius:14px;padding:8px 4px;text-align:center}
+.ringkas b{display:block;font-family:var(--display);font-weight:400;font-size:1.3rem;font-variant-numeric:tabular-nums}
+.ringkas span{font-size:.72rem;font-weight:800}
+.kode{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.78rem;font-weight:500;word-break:break-all;background:#fff;border:3px dashed var(--soga);border-radius:14px;padding:10px;user-select:all}
+.gulung{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.88rem;font-variant-numeric:tabular-nums}
+th,td{padding:7px 6px;text-align:left;border-bottom:2px solid rgba(27,31,59,.15);white-space:nowrap}
+th{font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--soga)}
+td.n,th.n{text-align:right}
+td.kurang{color:var(--salah);font-weight:800}td.tuntas{color:var(--benar);font-weight:800}
+td button{background:#fff;color:var(--salah);font-weight:800;padding:2px 8px;border:2px solid var(--salah);border-radius:10px;font-size:.8rem}
+.butir{display:flex;flex-direction:column;gap:12px}
+.butir .b{display:flex;flex-direction:column;gap:4px;font-size:.88rem}
+.butir .atas{display:flex;justify-content:space-between;gap:8px;font-weight:800}
+.butir .batang{height:10px;border-radius:6px;background:#e4e1f3;overflow:hidden}
+.butir .batang i{display:block;height:100%;background:var(--benar)}
+.butir .batang i.sulit{background:var(--salah)}
+.butir .kunci{color:var(--benar);font-weight:800}
+
+@keyframes awanjalan{to{background-position:420px 0}}
+@keyframes muncul{from{opacity:0;transform:scale(.85) translateY(14px)}to{opacity:1;transform:none}}
+@keyframes denyut{0%,100%{transform:scale(1)}50%{transform:scale(1.045)}}
+@keyframes lompat{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+@keyframes lintas{0%{transform:translateX(-120px) translateY(8px) rotate(-4deg)}50%{transform:translateX(calc(50vw - 48px)) translateY(-4px) rotate(3deg)}100%{transform:translateX(100vw) translateY(8px) rotate(-4deg)}}
+@keyframes garis{to{transform:translateX(-50px)}}
+@keyframes ayun{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(8px) rotate(3deg)}}
+@keyframes ngambang{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes bosmasuk{from{transform:translateY(-140px) scale(.5)}to{transform:none}}
+@keyframes lirik{0%,45%,100%{transform:translateX(0)}50%,95%{transform:translateX(4px)}}
+@keyframes boskena{0%,100%{transform:none;filter:none}20%{transform:translateX(12px) rotate(8deg);filter:brightness(3)}40%{transform:translateX(-9px) rotate(-6deg)}60%{transform:translateX(6px);filter:brightness(2)}80%{transform:translateX(-3px)}}
+@keyframes boskalah{0%{transform:none;opacity:1}100%{transform:translateY(40px) rotate(720deg) scale(0);opacity:0}}
+@keyframes guncang{0%,100%{translate:0 0}20%{translate:-8px 2px}40%{translate:7px -2px}60%{translate:-5px 1px}80%{translate:4px 0}}
+@keyframes gempa{0%,100%{transform:none}20%{transform:translate(-7px,4px)}40%{transform:translate(6px,-4px)}60%{transform:translate(-5px,-2px)}80%{transform:translate(4px,3px)}}
+@keyframes stempel{0%{transform:translate(-50%,-50%) rotate(-8deg) scale(3);opacity:0}35%{transform:translate(-50%,-50%) rotate(-8deg) scale(1);opacity:1}80%{opacity:1}100%{transform:translate(-50%,-70%) rotate(-8deg) scale(1);opacity:0}}
+@keyframes geser{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:none}}
+@keyframes hore{0%,100%{transform:scale(1)}40%{transform:scale(1.06)}}
+@keyframes naik{0%{opacity:0;transform:translate(-50%,-50%) scale(.4)}20%{opacity:1;transform:translate(-50%,-70%) scale(1.2)}100%{opacity:0;transform:translate(-50%,-230%) scale(1)}}
+@keyframes bintang{from{transform:scale(0) rotate(-180deg);opacity:0}to{transform:none;opacity:1}}
+@keyframes pecah{0%{transform:scale(1.8)}100%{transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+
+/* ===== dunia 3D ===== */
+.dunia{position:fixed;inset:0;z-index:5;background:#8fd8ff;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none}
+.dunia canvas.gl{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
+.dunia .hud{position:absolute;top:8px;left:8px;right:8px;z-index:3;pointer-events:none}
+.dunia .hud .pil{padding:2px 10px;font-size:1.05rem}
+.dunia .bar2{position:absolute;top:52px;left:8px;right:8px;z-index:3;display:flex;justify-content:space-between;align-items:flex-start;gap:6px;pointer-events:none}
+.dunia .chip span{font-size:.72rem;padding:0 8px}
+.dunia .mini{pointer-events:auto;font-size:.8rem;padding:2px 10px}
+.arah{position:absolute;top:92px;left:50%;transform:translateX(-50%);z-index:3;display:flex;flex-direction:column;align-items:center;gap:2px;pointer-events:none}
+.arah i{display:block;width:0;height:0;border-left:13px solid transparent;border-right:13px solid transparent;border-bottom:26px solid var(--kuning);filter:drop-shadow(0 0 0 var(--tinta)) drop-shadow(0 3px 0 var(--tinta));transition:transform .12s linear}
+.arah b{font-family:var(--display);font-weight:400;font-size:.95rem;white-space:nowrap;text-shadow:-1.5px -1.5px 0 var(--tinta),1.5px -1.5px 0 var(--tinta),-1.5px 1.5px 0 var(--tinta),1.5px 1.5px 0 var(--tinta)}
+.toast{position:absolute;top:150px;left:50%;transform:translateX(-50%);z-index:4;background:#fff;color:var(--tinta);border:3px solid var(--tinta);border-radius:20px;box-shadow:0 4px 0 var(--tinta);font-family:var(--display);font-size:1.05rem;padding:5px 16px;white-space:nowrap;max-width:94%;overflow:hidden;text-overflow:ellipsis;pointer-events:none;opacity:0}
+.toast.tampil{animation:toast 2.6s ease-out forwards}
+.joy{position:absolute;z-index:3;width:110px;height:110px;margin:-55px 0 0 -55px;border-radius:50%;background:rgba(255,255,255,.28);border:3px solid rgba(27,31,59,.55);pointer-events:none;display:none}
+.joy i{position:absolute;left:50%;top:50%;width:48px;height:48px;margin:-24px 0 0 -24px;border-radius:50%;background:var(--kuning);border:3px solid var(--tinta);box-shadow:0 3px 0 var(--tinta)}
+.petunjuk-jalan{position:absolute;left:0;right:0;bottom:22px;z-index:3;text-align:center;font-family:var(--display);font-size:1rem;pointer-events:none;text-shadow:-1.5px -1.5px 0 var(--tinta),1.5px -1.5px 0 var(--tinta),-1.5px 1.5px 0 var(--tinta),1.5px 1.5px 0 var(--tinta);animation:denyut 1.2s ease-in-out infinite}
+.panel{position:absolute;inset:0;z-index:6;overflow-y:auto;background:rgba(27,31,59,.86);padding:14px 12px 26px;display:none;flex-direction:column;gap:10px;touch-action:pan-y}
+.panel.buka{display:flex}
+.panel>*{max-width:540px;width:100%;margin-left:auto;margin-right:auto}
+.panel .judul-soal{font-family:var(--display);font-size:1.25rem;text-align:center;text-shadow:-2px -2px 0 var(--tinta),2px -2px 0 var(--tinta),-2px 2px 0 var(--tinta),2px 2px 0 var(--tinta)}
+@keyframes toast{0%{opacity:0;transform:translateX(-50%) scale(.6)}8%{opacity:1;transform:translateX(-50%) scale(1.08)}14%{transform:translateX(-50%) scale(1)}85%{opacity:1}100%{opacity:0}}
+.dunia .kiri2{display:flex;flex-direction:column;align-items:flex-start;gap:6px}
+.dunia canvas.peta{width:84px;height:84px;flex:none;border-radius:50%;background:#2f9fd6;border:3px solid var(--tinta);box-shadow:0 4px 0 var(--tinta)}
+.aksi{position:absolute;right:12px;bottom:34px;z-index:3;display:flex;flex-direction:column;gap:12px;align-items:flex-end}
+.aksi-b{width:84px;height:84px;border-radius:50%;border:3px solid var(--tinta);box-shadow:0 5px 0 var(--tinta);font-family:var(--display);font-size:.9rem;color:var(--tinta);background:var(--kuning);touch-action:none;line-height:1.05}
+.aksi-b.tameng{width:70px;height:70px;background:#9be7ff;font-size:.78rem}
+.aksi-b:active{transform:translateY(4px);box-shadow:0 1px 0 var(--tinta)}
+.aksi-b.dingin{opacity:.45}
+.duel{position:absolute;inset:0;z-index:7;display:none;align-items:center;justify-content:center;background:rgba(27,31,59,.55);padding:14px}
+.duel.buka{display:flex}
+.duel .kitab{max-width:420px;width:100%;text-align:center}
+.duel .pernyataan{font-size:1.15rem;font-weight:800;line-height:1.4}
+.duel .dua{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.duel .dua .utama{font-size:1.2rem;padding:16px 8px}
+.duel .dua .utama.s{background:#ff8fa3}
+.duel .dua .utama.b{background:#8be9a8}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<button id="suara" type="button" aria-pressed="true">SUARA ON</button>
+<canvas id="fx" aria-hidden="true"></canvas><div id="kilat" aria-hidden="true"></div>
+
+<script>
+var SOAL = [
+/*0*/{j:"I",q:"Syekh Hamzah Fansuri menyampaikan ajaran tasawuf terutama melalui …",
+ o:["syair-syair berbahasa Melayu","tafsir berbahasa Jawa beraksara pegon","kitab fikih berbahasa Arab","pengajian tetap di Masjidil Haram","hikayat tentang raja-raja Aceh"],
+ p:"Hamzah Fansuri adalah penyair sufi dari Barus. Ia merintis syair Melayu, antara lain Syair Perahu."},
+/*1*/{j:"A",k:"Raka rajin membuat konten dakwah berupa lagu dan puisi di media sosial. Seorang teman berkata, “Dakwah lewat lagu dan puisi itu kurang serius. Berhenti saja.”",
+ q:"Jika dianalisis dari cara berdakwah Syekh Hamzah Fansuri, tanggapan yang paling tepat adalah …",
+ o:["Raka dapat melanjutkan, sebab seni hanyalah sarana; yang wajib dijaga adalah kebenaran isi dan adabnya",
+    "Raka sebaiknya berhenti, sebab dakwah yang sah hanya melalui ceramah dan kitab",
+    "Raka boleh melanjutkan selama penontonnya banyak, sebab ukuran dakwah adalah popularitas",
+    "Raka bebas memakai bentuk dan isi apa pun, sebab karya seni tidak terikat aturan",
+    "Raka cukup menyalin syair Hamzah Fansuri agar pasti benar, tanpa perlu berkarya sendiri"],
+ p:"Hamzah Fansuri memakai syair sebagai sarana dakwah. Yang diteladani adalah kreativitas memilih sarana tanpa mengorbankan isi dan adab."},
+/*2*/{j:"I",q:"Tarjuman al-Mustafid karya Syekh Abdurrauf as-Singkili penting dalam sejarah karena merupakan …",
+ o:["tafsir Al-Qur’an lengkap pertama berbahasa Melayu","tafsir Al-Qur’an pertama berbahasa Jawa beraksara pegon","kitab sejarah raja-raja dan tata pemerintahan Aceh","kitab fikih ibadah yang ditulis untuk Sultan Aceh","kumpulan syair tasawuf pertama di Nusantara"],
+ p:"Tarjuman al-Mustafid adalah tafsir lengkap pertama dalam bahasa Melayu. Tafsir berbahasa Jawa pegon adalah karya Kiai Sholeh Darat."},
+/*3*/{j:"A",k:"Saat diskusi kelas, seorang siswa memprotes: “Nuruddin ar-Raniri lahir di Gujarat, India. Ia tidak pantas dimasukkan sebagai ulama Nusantara.”",
+ q:"Analisis yang paling tepat atas protes tersebut adalah …",
+ o:["Kurang tepat, sebab kiprahnya sebagai mufti Aceh dan karya-karyanya yang berbahasa Melayu menjadi bagian sejarah Islam Nusantara",
+    "Tepat, sebab seorang ulama dinilai dari tempat lahirnya, bukan dari tempat ia berkarya",
+    "Kurang tepat, sebab ia wafat dan dimakamkan di Aceh sehingga otomatis menjadi ulama Nusantara",
+    "Kurang tepat, sebab setiap ulama yang pernah singgah di Nusantara disebut ulama Nusantara",
+    "Tepat, sebab ia menulis seluruh karyanya dalam bahasa Arab untuk pembaca di India"],
+ p:"Ar-Raniri lahir di Ranir, Gujarat, tetapi mengabdi sebagai mufti Aceh pada masa Sultan Iskandar Tsani dan menulis karya berbahasa Melayu seperti Bustanus Salatin. Kontribusinya yang menentukan."},
+/*4*/{j:"A",k:"Di grup kelas terjadi perdebatan panas tentang perbedaan tata cara ibadah. Dua kubu mulai saling menyebut sesat. Fajar, ketua kelas, ingin meneladani Syekh Abdurrauf as-Singkili yang dikenal menengahi perselisihan paham di Aceh dengan cara yang sejuk.",
+ q:"Langkah Fajar yang paling sesuai dengan teladan tersebut adalah …",
+ o:["mengajak kedua pihak menahan diri, menjelaskan bahwa perbedaan itu punya dasar dari para ulama, lalu membawa pertanyaannya kepada guru PAI",
+    "membiarkan perdebatan berjalan, sebab perbedaan pendapat adalah urusan pribadi masing-masing",
+    "memutuskan sendiri pendapat mana yang benar agar perdebatan cepat selesai",
+    "mengeluarkan kubu yang anggotanya lebih sedikit supaya grup kembali tenang",
+    "melarang semua pembahasan agama di grup kelas untuk seterusnya"],
+ p:"Menengahi berarti meredakan, memberi pemahaman, dan merujuk kepada ahlinya. Membiarkan, memutuskan sepihak, atau membungkam bukan penyelesaian."},
+/*5*/{j:"I",q:"Pasangan ulama dan karyanya yang tepat adalah …",
+ o:["Syekh Abdus Samad al-Palimbani – Hidayatus Salikin","Syekh Nuruddin ar-Raniri – Tarjuman al-Mustafid","Syekh Nawawi al-Bantani – Faidhur Rahman","Kiai Sholeh Darat – Bustanus Salatin","Syekh Hamzah Fansuri – Sairus Salikin"],
+ p:"Hidayatus Salikin dan Sairus Salikin adalah karya al-Palimbani. Tarjuman al-Mustafid karya as-Singkili, Faidhur Rahman karya Kiai Sholeh Darat, Bustanus Salatin karya ar-Raniri."},
+/*6*/{j:"A",k:"Kak Salma kuliah di luar negeri dengan beasiswa. Ia berkata, “Karena aku jauh, aku tidak bisa berbuat apa-apa untuk kampung halamanku.” Padahal Syekh Abdus Samad al-Palimbani menetap di Haramain, tetapi menulis kitab berbahasa Melayu untuk umat di tanah airnya.",
+ q:"Penilaian yang paling tepat terhadap pernyataan Kak Salma adalah …",
+ o:["Kurang tepat, sebab jarak bukan penghalang; ia tetap dapat berkontribusi lewat karya, ilmu, dan jejaring yang dimilikinya",
+    "Tepat, sebab kontribusi bagi tanah air hanya mungkin dilakukan oleh orang yang tinggal di dalamnya",
+    "Kurang tepat, sebab ia seharusnya segera pulang dan meninggalkan kuliahnya demi kampung halaman",
+    "Tepat, sebab tugas pelajar hanyalah belajar; berkontribusi adalah urusan setelah lulus",
+    "Kurang tepat, sebab ia cukup sering mengunggah kerinduannya kepada kampung halaman"],
+ p:"Al-Palimbani membuktikan bahwa orang yang jauh dari tanah air tetap dapat memberi manfaat nyata lewat karya dan ilmu."},
+/*7*/{j:"A",k:"Dalam Hidayatus Salikin, al-Palimbani menyadur karya Imam al-Gazali ke bahasa Melayu, menyebutkan sumbernya, dan menambahkan penjelasan yang dibutuhkan masyarakatnya. Dinda menerjemahkan sebuah artikel asing untuk makalahnya, lalu mengumpulkannya sebagai tulisan sendiri.",
+ q:"Perbedaan mendasar antara keduanya adalah …",
+ o:["Al-Palimbani jujur menyebut sumber dan memberi nilai tambah, sedangkan Dinda menyembunyikan sumber sehingga tergolong plagiat",
+    "Tidak ada perbedaan, sebab keduanya sama-sama memindahkan tulisan ke bahasa lain",
+    "Perbedaannya hanya pada bahasa tujuan yang dipakai masing-masing",
+    "Dinda lebih baik, sebab sumber yang ia terjemahkan lebih baru",
+    "Keduanya keliru, sebab karya ulama besar tidak boleh disadur ke bahasa lain"],
+ p:"Kejujuran ilmiah adalah adab berilmu. Menyadur dengan menyebut sumber dan menambah penjelasan berbeda dengan mengakui karya orang lain."},
+/*8*/{j:"I",q:"Syekh Nawawi al-Bantani digelari Sayyid Ulama al-Hijaz karena …",
+ o:["keluasan ilmu dan banyaknya karya beliau diakui para ulama di Tanah Hijaz","beliau keturunan langsung penguasa Hijaz","beliau memimpin perlawanan bersenjata di Hijaz","beliau menjabat mufti resmi Kesultanan Banten","beliau ulama Nusantara pertama yang menunaikan haji"],
+ p:"Gelar itu berarti pemimpin ulama Hijaz, diberikan karena kedalaman ilmu dan karya beliau yang lebih dari seratus kitab."},
+/*9*/{j:"A",k:"Syekh Nawawi tidak kembali menetap di Banten. Namun murid-muridnya dari Nusantara pulang, lalu mendirikan pesantren dan menggerakkan umat. Kitab-kitabnya pun dikaji di pesantren sampai sekarang.",
+ q:"Dari fakta tersebut, pengaruh terbesar Syekh Nawawi bagi Indonesia paling tepat dijelaskan sebagai …",
+ o:["pengaruh keilmuan yang menyebar lewat kitab dan murid-muridnya, meskipun beliau sendiri tinggal di Makkah",
+    "pengaruh politik, karena beliau memimpin langsung perlawanan rakyat Banten dari Makkah",
+    "pengaruh ekonomi, karena beliau membuka jalur dagang antara Banten dan Hijaz",
+    "pengaruh yang terbatas, karena ilmunya hanya dinikmati penduduk Makkah",
+    "pengaruh simbolis, yakni mengharumkan nama Banten tanpa dampak nyata di tanah air"],
+ p:"Ilmu yang ditulis dan diajarkan terus hidup melampaui tempat dan zaman. Itulah pengaruh keilmuan Syekh Nawawi."},
+/*10*/{j:"A",k:"Bima baru saja menjuarai olimpiade sains. Sejak itu ia sering meremehkan jawaban temannya dan enggan mengajari mereka. “Belajar saja sendiri,” katanya. Syekh Nawawi justru dikenal semakin rendah hati dan giat mengajar ketika ilmunya semakin luas.",
+ q:"Masalah utama pada sikap Bima adalah …",
+ o:["ia memisahkan ilmu dari adab, padahal ilmu semestinya membuatnya rendah hati dan mau berbagi",
+    "ia belum cukup berprestasi sehingga memang belum pantas mengajari orang lain",
+    "ia terlalu banyak belajar sehingga tidak punya waktu untuk bergaul",
+    "tidak ada masalah, sebab orang berilmu wajar mendapat kedudukan lebih tinggi",
+    "masalahnya ada pada teman-temannya yang iri terhadap prestasi Bima"],
+ p:"Teladan Syekh Nawawi: ilmu yang bertambah harus diiringi tawaduk dan semangat mengajarkan."},
+/*11*/{j:"I",q:"Tafsir Faidhur Rahman karya Kiai Sholeh Darat ditulis dengan …",
+ o:["bahasa Jawa dengan aksara Arab (pegon)","bahasa Melayu dengan aksara Arab (Jawi)","bahasa Arab dengan terjemahan Jawa","bahasa Jawa dengan aksara Latin","bahasa Jawa dengan aksara hanacaraka"],
+ p:"Faidhur Rahman berbahasa Jawa dengan aksara pegon, yaitu huruf Arab yang dipakai untuk menulis bahasa Jawa."},
+/*12*/{j:"A",k:"Pada masa penjajahan, usaha menerjemahkan Al-Qur’an dicurigai dan dihalangi. Kiai Sholeh Darat tetap menulis tafsir berbahasa Jawa, tetapi dengan aksara pegon yang akrab bagi santri dan tidak dipahami penjajah.",
+ q:"Analisis yang paling tepat atas pilihan Kiai Sholeh Darat adalah …",
+ o:["strategi cerdas untuk tetap mencerdaskan umat dengan bahasa mereka tanpa mengorbankan tujuan dakwah",
+    "bentuk ketundukan kepada penjajah karena beliau tidak berani memakai huruf Latin",
+    "kebetulan saja, sebab beliau tidak menguasai aksara selain pegon",
+    "upaya merahasiakan ilmu agar hanya dikuasai kalangan santri",
+    "penolakan terhadap bahasa Arab sebagai bahasa ilmu agama"],
+ p:"Beliau menyiasati hambatan tanpa meninggalkan tujuan: masyarakat Jawa tetap dapat memahami Al-Qur’an."},
+/*13*/{j:"A",k:"Di sebuah sekolah, pengurus Rohis yang berlatar belakang NU dan Muhammadiyah berselisih soal tata cara kegiatan dan mulai enggan bekerja sama. Padahal K.H. Hasyim Asy’ari dan K.H. Ahmad Dahlan pernah berguru kepada guru yang sama, Kiai Sholeh Darat.",
+ q:"Kesimpulan paling tepat yang dapat ditarik dari fakta sejarah itu untuk kasus Rohis adalah …",
+ o:["perbedaan cara berjuang tidak menghapus persaudaraan dan sumber ilmu yang sama, sehingga kerja sama tetap perlu dijaga",
+    "salah satu organisasi pasti telah menyimpang dari ajaran gurunya",
+    "kedua organisasi sebaiknya dilebur menjadi satu agar tidak ada lagi perbedaan",
+    "perbedaan itu membuktikan sang guru gagal menyatukan murid-muridnya",
+    "Rohis sebaiknya dibagi dua supaya tiap kelompok berjalan sendiri-sendiri"],
+ p:"Dua murid dari guru yang sama menempuh jalan perjuangan berbeda dan sama-sama berjasa bagi umat. Perbedaan bukan alasan memutus kerja sama."},
+/*14*/{j:"I",q:"Urutan perjalanan hidup Syekh Yusuf al-Makassari yang benar adalah …",
+ o:["Gowa → menuntut ilmu ke Haramain → mufti Banten → diasingkan ke Sri Lanka → Afrika Selatan",
+    "Gowa → mufti Banten → menuntut ilmu ke Haramain → Afrika Selatan → Sri Lanka",
+    "Gowa → menuntut ilmu ke Haramain → mufti Aceh → Sri Lanka → Afrika Selatan",
+    "Banten → Gowa → Sri Lanka → menuntut ilmu ke Haramain → Afrika Selatan",
+    "Gowa → diasingkan ke Sri Lanka → Haramain → mufti Banten → Afrika Selatan"],
+ p:"Syekh Yusuf lahir di Gowa, belajar hingga Haramain, menjadi mufti Banten, lalu diasingkan ke Sri Lanka dan akhirnya ke Afrika Selatan."},
+/*15*/{j:"A",k:"Setelah diasingkan ke Sri Lanka, Syekh Yusuf tetap menulis, mengajar, dan dikunjungi jemaah haji Nusantara yang singgah. Beberapa tahun kemudian Belanda memindahkannya lebih jauh lagi, ke Tanjung Harapan di Afrika Selatan.",
+ q:"Alasan paling logis di balik pemindahan itu adalah …",
+ o:["di Sri Lanka pengaruhnya terhadap Nusantara belum terputus, sehingga Belanda ingin menjauhkannya lagi",
+    "Belanda ingin memberinya tempat yang lebih nyaman sebagai bentuk penghormatan",
+    "Syekh Yusuf sendiri meminta dipindahkan agar dapat berdakwah di Afrika",
+    "Sri Lanka telah direbut Inggris sehingga semua tahanan Belanda dipindahkan",
+    "masa hukumannya di Sri Lanka telah selesai dan ia dibebaskan ke Afrika"],
+ p:"Pengasingan pertama gagal memutus pengaruhnya. Karena itu ia dijauhkan lagi. Di Afrika Selatan pun beliau tetap berdakwah."},
+/*16*/{j:"A",k:"Dita mengikuti pertukaran pelajar ke negara tempat ia menjadi satu-satunya muslim di sekolahnya. Karena merasa asing, ia mulai meninggalkan salat supaya “lebih diterima” teman-temannya.",
+ q:"Sikap yang paling sesuai dengan teladan Syekh Yusuf di pengasingan adalah …",
+ o:["tetap menjaga ibadah, berakhlak baik, dan terbuka bergaul sehingga keislamannya dikenal lewat teladan",
+    "menyembunyikan identitasnya sampai pulang, sebab diterima dalam pergaulan lebih utama",
+    "menjaga ibadah dengan cara menjauhi semua teman yang berbeda agama",
+    "mengajak teman-temannya berdebat soal agama sampai mereka mengakui kebenaran Islam",
+    "meminta segera dipulangkan karena lingkungan itu tidak mendukung ibadahnya"],
+ p:"Syekh Yusuf tetap teguh dan justru dihormati masyarakat setempat. Istikamah tidak berarti menutup diri atau memaksa orang lain."},
+/*17*/{j:"I",q:"Ulama disebut waratsatul anbiya’. Maksud ungkapan ini adalah ulama …",
+ o:["mewarisi ilmu para nabi serta tugas membimbing umat, bukan harta atau kenabian","mewarisi kedudukan kenabian setelah Nabi Muhammad saw. wafat","merupakan keturunan langsung para nabi","berhak menetapkan syariat baru sesuai kebutuhan zaman","mewarisi kekuasaan pemerintahan atas umat Islam"],
+ p:"Para nabi mewariskan ilmu. Ulama meneruskan tugas mengajarkan dan membimbing, bukan menerima wahyu atau membuat syariat baru."},
+/*18*/{j:"A",k:"Hamzah Fansuri bersyair dalam bahasa Melayu. As-Singkili menafsirkan Al-Qur’an dalam bahasa Melayu. Kiai Sholeh Darat menulis tafsir berbahasa Jawa pegon. Syekh Nawawi menulis dalam bahasa Arab dan kitabnya dibaca di berbagai negeri.",
+ q:"Kesimpulan paling tepat dari pola tersebut adalah …",
+ o:["para ulama memilih bahasa dan media sesuai sasaran dakwahnya; isinya tetap, cara penyampaiannya menyesuaikan",
+    "bahasa daerah lebih utama daripada bahasa Arab untuk mempelajari ilmu agama",
+    "setiap ulama hanya menguasai satu bahasa sehingga menulis dengan bahasa itu saja",
+    "karya berbahasa Arab selalu lebih tinggi nilainya daripada karya berbahasa daerah",
+    "pilihan bahasa ditentukan oleh penguasa setempat, bukan oleh ulama itu sendiri"],
+ p:"Sasaran dakwah menentukan bahasa dan media. Itulah kebijaksanaan dakwah para ulama Nusantara."},
+/*19*/{j:"A",k:"Guru PAI meminta kelas membuat proyek “Meneladani Ulama Nusantara”. Proyek itu harus mencerminkan keteladanan mereka secara utuh: semangat berilmu, berkarya, dan memberi manfaat bagi orang lain.",
+ q:"Usulan proyek yang paling memenuhi tujuan tersebut adalah …",
+ o:["menulis ringkasan materi dengan bahasa yang mudah dipahami, mencantumkan sumbernya, lalu membagikannya kepada adik kelas",
+    "menghafal nama, tahun lahir, dan judul kitab semua ulama lalu menyetorkannya",
+    "membuat poster foto makam para ulama untuk dipajang di dinding kelas",
+    "mengunggah kutipan ulama setiap hari tanpa perlu memeriksa sumbernya",
+    "mengadakan lomba cerdas cermat dengan hadiah bagi yang menjawab paling cepat"],
+ p:"Meneladani berarti melakukan: belajar sungguh-sungguh, menghasilkan karya yang jujur sumbernya, dan membagikan manfaatnya."}
+];
+
+/* Revisi pilihan jawaban (versi ketat): setiap pengecoh berpola sama dengan kunci dan
+   hanya berbeda pada satu unsur. Pilihan pertama tetap jawaban benar; urutan diacak saat tampil. */
+var REVISI = {
+0:{q:"Pernyataan yang tepat tentang Syekh Hamzah Fansuri adalah …",
+   o:["Berasal dari Barus dan menyampaikan tasawuf lewat syair Melayu seperti Syair Perahu",
+      "Berasal dari Barus dan menyampaikan tasawuf lewat syair Arab seperti Syair Perahu",
+      "Berasal dari Barus dan menyampaikan fikih lewat syair Melayu seperti Syair Perahu",
+      "Berasal dari Singkil dan menyampaikan tasawuf lewat syair Melayu seperti Syair Perahu",
+      "Berasal dari Barus dan menyampaikan tasawuf lewat syair Melayu seperti Bustanus Salatin"],
+   p:"Hamzah Fansuri berasal dari Barus (Fansur), penyair sufi yang menulis syair berbahasa Melayu seperti Syair Perahu. Singkil adalah asal as-Singkili, dan Bustanus Salatin adalah karya ar-Raniri."},
+1:{o:["Lanjutkan, sebab syair pun dipakai ulama untuk berdakwah; yang perlu dijaga adalah kebenaran isi dan adabnya.",
+      "Lanjutkan, sebab syair pun dipakai ulama untuk berdakwah; yang perlu dijaga adalah jumlah orang yang menyimaknya.",
+      "Lanjutkan, sebab syair pun dipakai ulama untuk berdakwah; jadi setiap karya seni dengan sendirinya bernilai dakwah.",
+      "Lanjutkan, sebab syair pun dipakai ulama untuk berdakwah; isinya boleh mengikuti selera penonton asal niatnya baik.",
+      "Lanjutkan, tetapi pakailah syair saja, sebab hanya bentuk syair yang pernah dipakai ulama untuk berdakwah."],
+   p:"Hamzah Fansuri memakai syair sebagai sarana. Yang menentukan nilai dakwahnya adalah isi yang benar dan adab penyampaiannya, bukan jumlah penonton, bukan seninya itu sendiri, dan bukan selera penonton."},
+2:{q:"Pernyataan yang tepat tentang Tarjuman al-Mustafid adalah …",
+   o:["Tafsir Al-Qur’an lengkap pertama berbahasa Melayu, karya Syekh Abdurrauf as-Singkili",
+      "Tafsir Al-Qur’an lengkap pertama berbahasa Melayu, karya Syekh Nuruddin ar-Raniri",
+      "Tafsir Al-Qur’an lengkap pertama berbahasa Melayu, karya Syekh Hamzah Fansuri",
+      "Tafsir Al-Qur’an lengkap pertama berbahasa Jawa, karya Syekh Abdurrauf as-Singkili",
+      "Kitab fikih lengkap pertama berbahasa Melayu, karya Syekh Abdurrauf as-Singkili"],
+   p:"Tarjuman al-Mustafid adalah tafsir lengkap pertama berbahasa Melayu, ditulis Syekh Abdurrauf as-Singkili. Tafsir berbahasa Jawa adalah Faidhur Rahman karya Kiai Sholeh Darat."},
+3:{o:["Kurang tepat, sebab ia menjadi mufti Aceh pada masa Sultan Iskandar Tsani dan menulis Bustanus Salatin dalam bahasa Melayu.",
+      "Kurang tepat, sebab ia menjadi mufti Aceh pada masa Sultan Iskandar Muda dan menulis Bustanus Salatin dalam bahasa Melayu.",
+      "Kurang tepat, sebab ia menjadi mufti Aceh pada masa Sultan Iskandar Tsani dan menulis Tarjuman al-Mustafid dalam bahasa Melayu.",
+      "Kurang tepat, sebab ia menjadi mufti Aceh pada masa Sultan Iskandar Tsani dan menulis Bustanus Salatin dalam bahasa Arab.",
+      "Kurang tepat, sebab ia menjadi mufti Banten pada masa Sultan Ageng Tirtayasa dan menulis Bustanus Salatin dalam bahasa Melayu."],
+   p:"Ar-Raniri menjadi mufti Aceh pada masa Sultan Iskandar Tsani dan menulis Bustanus Salatin dalam bahasa Melayu. Tarjuman al-Mustafid karya as-Singkili, dan mufti Banten pada masa Sultan Ageng Tirtayasa adalah Syekh Yusuf."},
+4:{o:["Meminta kedua pihak menahan diri, menjelaskan bahwa perbedaan itu punya dasar dari ulama, lalu menanyakan penjelasannya kepada guru PAI.",
+      "Meminta kedua pihak menahan diri, menjelaskan bahwa perbedaan itu punya dasar dari ulama, lalu menetapkan satu cara yang wajib diikuti sekelas.",
+      "Meminta kedua pihak menahan diri, menjelaskan bahwa perbedaan itu punya dasar dari ulama, lalu meminta topik itu tidak dibahas lagi selamanya.",
+      "Meminta kedua pihak menahan diri, menanyakan penjelasannya kepada guru PAI, lalu mengumumkan nama teman yang pendapatnya ternyata keliru.",
+      "Meminta kedua pihak menahan diri, menjelaskan bahwa semua pendapat pasti sama benarnya, sehingga tidak perlu bertanya kepada siapa pun."],
+   p:"Menengahi dengan sejuk berarti meredakan, memberi pemahaman, dan merujuk kepada ahlinya. Menetapkan satu cara, membungkam pembahasan, mempermalukan teman, atau menganggap semua pasti sama benarnya bukan cara as-Singkili."},
+5:{q:"Pasangan ulama dan dua karyanya yang seluruhnya tepat adalah …",
+   o:["Syekh Abdus Samad al-Palimbani: Hidayatus Salikin dan Sairus Salikin",
+      "Syekh Abdurrauf as-Singkili: Tarjuman al-Mustafid dan Hidayatus Salikin",
+      "Syekh Nuruddin ar-Raniri: Bustanus Salatin dan Tarjuman al-Mustafid",
+      "Syekh Nawawi al-Bantani: Tafsir al-Munir dan tafsir Faidhur Rahman",
+      "Syekh Hamzah Fansuri: Syair Perahu dan kitab Sairus Salikin"],
+   p:"Hidayatus Salikin dan Sairus Salikin sama-sama karya al-Palimbani. Pada pilihan lain hanya satu karya yang cocok: Tarjuman al-Mustafid milik as-Singkili, Bustanus Salatin milik ar-Raniri, Tafsir al-Munir milik Syekh Nawawi, Faidhur Rahman milik Kiai Sholeh Darat."},
+6:{o:["Kurang tepat, sebab seperti al-Palimbani, dari jauh pun ia dapat mengirimkan karya dan ilmu yang bermanfaat bagi kampungnya.",
+      "Kurang tepat, sebab seperti al-Palimbani, ia dapat berkarya dari jauh, walau karya itu baru bermanfaat setelah ia pulang nanti.",
+      "Kurang tepat, sebab seperti al-Palimbani, ia cukup belajar setinggi mungkin dan manfaat bagi kampungnya akan datang sendiri.",
+      "Kurang tepat, sebab seperti al-Palimbani, ia dapat mengirimkan karya berbahasa asing agar kampungnya terbiasa membacanya.",
+      "Kurang tepat, sebab seperti al-Palimbani, ia sebaiknya menetap di negeri orang agar namanya mengharumkan kampungnya."],
+   p:"Al-Palimbani menetap di Haramain, tetapi karyanya ditulis dalam bahasa Melayu dan langsung bermanfaat di tanah air. Teladannya: berkarya untuk umat dari mana pun, dengan bahasa yang mereka pahami, tanpa menunggu pulang."},
+7:{q:"Perbedaan yang membuat perbuatan Dinda tidak dapat dibenarkan adalah …",
+   o:["Al-Palimbani menyebutkan sumber sadurannya, sedangkan Dinda mengakui terjemahan itu sebagai tulisannya sendiri.",
+      "Al-Palimbani menambahkan penjelasan sendiri, sedangkan Dinda menerjemahkan artikel itu tanpa menambah apa pun.",
+      "Al-Palimbani menyadur untuk kepentingan dakwah, sedangkan Dinda menerjemahkan untuk memenuhi tugas sekolahnya.",
+      "Al-Palimbani menyadur karya ulama terdahulu, sedangkan Dinda menerjemahkan karya seorang penulis masa kini.",
+      "Al-Palimbani menyadur kitab berbahasa Arab, sedangkan Dinda menerjemahkan artikel dari bahasa asing lainnya."],
+   p:"Semua pilihan memang menggambarkan perbedaan, tetapi hanya satu yang membuat perbuatan Dinda tercela: ia menyembunyikan sumber. Menerjemahkan untuk tugas, tanpa tambahan, dari penulis mana pun tetap boleh selama sumbernya disebut."},
+8:{q:"Pernyataan yang tepat tentang Syekh Nawawi al-Bantani adalah …",
+   o:["Lahir di Tanara, Banten; mengajar di Makkah; bergelar Sayyid Ulama al-Hijaz",
+      "Lahir di Tanara, Banten; mengajar di Makkah; bergelar Tuanta Salamaka",
+      "Lahir di Tanara, Banten; mengajar di Kairo; bergelar Sayyid Ulama al-Hijaz",
+      "Lahir di Tanara, Banten; mufti Kesultanan Banten; bergelar Sayyid Ulama al-Hijaz",
+      "Lahir di Tanara, Banten; mengajar di Makkah; menulis tafsir Faidhur Rahman"],
+   p:"Syekh Nawawi lahir di Tanara, mengajar di Makkah, dan digelari Sayyid Ulama al-Hijaz. Tuanta Salamaka dan mufti Banten merujuk kepada Syekh Yusuf, sedangkan Faidhur Rahman adalah karya Kiai Sholeh Darat."},
+9:{o:["Ilmunya sampai ke tanah air lewat kitab yang dikaji di pesantren dan lewat murid-murid yang pulang mengajar.",
+      "Ilmunya sampai ke tanah air lewat kitab yang dikaji di pesantren, meskipun tidak ada muridnya yang pulang mengajar.",
+      "Ilmunya sampai ke tanah air lewat murid-murid yang pulang mengajar, sebab kitabnya hanya beredar di Timur Tengah.",
+      "Ilmunya sampai ke tanah air lewat kitab berbahasa Jawa yang ditulisnya khusus bagi para santri di Nusantara.",
+      "Ilmunya sampai ke tanah air lewat pesantren yang didirikannya sendiri di Banten sepulang dari Makkah."],
+   p:"Kasusnya menyebut dua jalur sekaligus: murid-murid yang pulang dan kitab yang dikaji di pesantren. Beliau menulis dalam bahasa Arab dan tidak kembali menetap di Banten."},
+10:{o:["Ilmunya bertambah, tetapi tidak diiringi kerendahan hati dan kemauan untuk mengajarkannya.",
+       "Ilmunya bertambah, tetapi belum cukup tinggi untuk pantas diajarkan kepada teman-temannya.",
+       "Ilmunya bertambah, tetapi ia belum menguasai cara mengajar yang membuat temannya paham.",
+       "Ilmunya bertambah, tetapi ia kurang menjaga pergaulan sehingga mulai dijauhi temannya.",
+       "Ilmunya bertambah, tetapi ia lupa bahwa prestasi itu diraih berkat dukungan sekolahnya."],
+   p:"Teladan Syekh Nawawi: makin berilmu, makin rendah hati dan makin giat mengajar. Akar masalah Bima adalah ilmu yang tidak membuahkan adab, bukan tinggi rendahnya ilmu, kemampuan mengajar, atau akibatnya dalam pergaulan."},
+11:{q:"Pernyataan yang tepat tentang tafsir Faidhur Rahman adalah …",
+   o:["Karya Kiai Sholeh Darat, berbahasa Jawa, ditulis dengan aksara Arab pegon",
+      "Karya Kiai Sholeh Darat, berbahasa Jawa, ditulis dengan aksara hanacaraka",
+      "Karya Kiai Sholeh Darat, berbahasa Melayu, ditulis dengan aksara Arab Jawi",
+      "Karya Syekh Nawawi al-Bantani, berbahasa Jawa, ditulis dengan aksara Arab pegon",
+      "Karya Kiai Sholeh Darat, berbahasa Arab, dilengkapi terjemahan Jawa pegon"],
+   p:"Faidhur Rahman ditulis Kiai Sholeh Darat dalam bahasa Jawa dengan aksara pegon, yaitu huruf Arab yang dipakai untuk menulis bahasa Jawa."},
+12:{o:["Siasat agar umat tetap dapat memahami Al-Qur’an dalam bahasanya tanpa mudah dihalangi penjajah.",
+       "Siasat agar umat tetap dapat memahami Al-Qur’an tanpa perlu lagi mempelajari bahasa Arab.",
+       "Siasat agar umat dapat memahami Al-Qur’an setelah penjajah mengizinkan penerjemahannya.",
+       "Siasat agar aksara pegon tetap lestari dan tidak tergeser oleh huruf Latin milik penjajah.",
+       "Siasat agar tafsir itu hanya dipelajari kalangan santri dan tidak sampai kepada orang awam."],
+   p:"Tujuannya mencerdaskan umat, dan pegon adalah cara menyiasati hambatan penjajah. Beliau tidak menunggu izin, tidak bermaksud menggantikan bahasa Arab, dan justru ingin ilmunya sampai kepada orang awam."},
+13:{o:["Perbedaan cara tidak menghapus persaudaraan, sebab keduanya berakar pada guru yang sama; kerja sama tetap dijaga.",
+       "Perbedaan cara tidak menghapus persaudaraan; namun supaya rukun, tiap kelompok sebaiknya berkegiatan terpisah.",
+       "Perbedaan cara tidak menghapus persaudaraan; maka cukup dipakai cara kelompok yang anggotanya lebih banyak.",
+       "Perbedaan cara semestinya tidak ada, sebab keduanya berakar pada guru yang sama; tata caranya harus disamakan.",
+       "Perbedaan cara hanyalah soal nama organisasi, sebab keduanya berakar pada guru yang sama dan ajarannya persis sama."],
+   p:"Dua murid dari guru yang sama menempuh jalan berbeda dan sama-sama berjasa. Perbedaannya nyata dan tidak perlu dihapus, tetapi juga bukan alasan untuk berpisah atau memaksakan cara mayoritas."},
+14:{o:["Gowa → menuntut ilmu ke Haramain → mufti Banten → diasingkan ke Sri Lanka → Afrika Selatan",
+       "Gowa → mufti Banten → menuntut ilmu ke Haramain → diasingkan ke Sri Lanka → Afrika Selatan",
+       "Gowa → menuntut ilmu ke Haramain → mufti Banten → diasingkan ke Afrika Selatan → Sri Lanka",
+       "Gowa → menuntut ilmu ke Haramain → mufti Aceh → diasingkan ke Sri Lanka → Afrika Selatan",
+       "Banten → menuntut ilmu ke Haramain → mufti Gowa → diasingkan ke Sri Lanka → Afrika Selatan"],
+   p:"Syekh Yusuf lahir di Gowa, belajar hingga Haramain, baru kemudian menjadi mufti Banten. Ia diasingkan ke Sri Lanka lebih dulu, lalu ke Afrika Selatan."},
+15:{o:["Di Sri Lanka ia masih dikunjungi jemaah haji Nusantara, sehingga pengaruhnya ke tanah air belum terputus.",
+       "Di Sri Lanka ia masih dikunjungi jemaah haji Nusantara, sehingga ia meminta dipindah agar tenang beribadah.",
+       "Di Sri Lanka ia masih menulis dan mengajar, sehingga Belanda ingin memberinya tempat yang lebih layak.",
+       "Di Sri Lanka ia masih menulis dan mengajar, sehingga penguasa setempat meminta Belanda memindahkannya.",
+       "Di Sri Lanka ia tidak lagi menulis dan mengajar, sehingga Belanda menganggapnya tidak berbahaya lagi."],
+   p:"Kasusnya menyebut ia tetap menulis, mengajar, dan dikunjungi jemaah haji. Bagi Belanda itu berarti pengasingan pertama gagal memutus pengaruhnya, maka ia dijauhkan lagi."},
+16:{o:["Tetap salat dan berakhlak baik, serta bergaul terbuka sehingga temannya mengenal Islam dari perilakunya.",
+       "Tetap salat dan berakhlak baik, serta mengajak temannya berdebat sampai mereka mengakui kebenaran Islam.",
+       "Tetap salat dan berakhlak baik, tetapi hanya bergaul dengan sesama muslim supaya imannya tidak goyah.",
+       "Tetap salat secara diam-diam dan berakhlak baik, serta menutupi keislamannya supaya tetap diterima.",
+       "Tetap berakhlak baik dan bergaul terbuka, serta mengganti salat yang ditinggalkan setelah pulang nanti."],
+   p:"Syekh Yusuf tetap teguh beribadah dan dihormati masyarakat setempat karena akhlaknya. Istikamah tidak berarti memaksa, menutup diri, menyembunyikan identitas, atau menunda kewajiban."},
+17:{o:["mewarisi ilmu para nabi dan bertugas menyampaikannya kepada umat",
+       "mewarisi wahyu para nabi dan bertugas menyampaikannya kepada umat",
+       "mewarisi ilmu para nabi dan berwenang menetapkan syariat yang baru",
+       "mewarisi ilmu para nabi sehingga pendapatnya terjaga dari kesalahan",
+       "mewarisi ilmu dan harta para nabi untuk dikelola bagi kepentingan umat"],
+   p:"Para nabi tidak mewariskan harta, melainkan ilmu. Ulama tidak menerima wahyu, tidak membuat syariat baru, dan tidak terjaga dari salah."},
+18:{o:["Bahasa dan medianya disesuaikan dengan sasaran dakwah, sedangkan isi ajarannya tetap sama.",
+       "Bahasa dan medianya disesuaikan dengan asal daerah ulamanya, sedangkan isi ajarannya tetap sama.",
+       "Bahasa dan medianya disesuaikan dengan permintaan penguasa, sedangkan isi ajarannya tetap sama.",
+       "Bahasa dan medianya disesuaikan dengan sasaran dakwah, dan isi ajarannya pun ikut disesuaikan.",
+       "Isi ajarannya disesuaikan dengan sasaran dakwah, sedangkan bahasa dan medianya tetap sama."],
+   p:"Yang menentukan pilihan bahasa adalah siapa yang ingin dijangkau, bukan asal daerah ulamanya: Syekh Nawawi orang Banten, tetapi menulis dalam bahasa Arab untuk pembaca di berbagai negeri. Isi ajarannya tidak berubah."},
+19:{k:"Guru PAI meminta kelas membuat proyek “Meneladani Ulama Nusantara”. Proyek itu harus memenuhi tiga hal sekaligus: sungguh-sungguh berilmu, berkarya dengan jujur, dan memberi manfaat bagi orang lain.",
+    o:["Menulis ringkasan materi dengan bahasa sendiri, mencantumkan sumbernya, lalu membagikannya kepada adik kelas.",
+       "Menulis ringkasan materi dengan bahasa sendiri, mencantumkan sumbernya, lalu menyimpannya untuk belajar pribadi.",
+       "Menulis ringkasan materi dengan bahasa sendiri, tanpa mencantumkan sumber, lalu membagikannya kepada adik kelas.",
+       "Mengumpulkan ringkasan materi dari berbagai situs, menyusunnya dengan rapi, lalu membagikannya kepada adik kelas.",
+       "Menghafal ringkasan materi sampai lancar, menyetorkannya kepada guru, lalu membantu teman yang belum hafal."],
+    p:"Hanya satu pilihan yang memenuhi ketiganya. Catatan pribadi tidak memberi manfaat bagi orang lain, tanpa sumber berarti tidak jujur, kumpulan dari situs bukan karya sendiri, dan hafalan belum menjadi karya."}
+};
+Object.keys(REVISI).forEach(function(i){for(var k in REVISI[i])SOAL[i][k]=REVISI[i][k]});
+/* Revisi lanjutan: bagian akhir tiap pilihan dibuat sama meyakinkannya; beda hanya satu kata kunci. */
+var REVISI3 = {
+1:{o:["Lanjutkan; seni itu sarana dakwah, asalkan isinya benar dan adabnya terjaga.",
+      "Lanjutkan; seni itu sarana dakwah, asalkan isinya menarik dan adabnya terjaga.",
+      "Lanjutkan; seni itu sarana dakwah, asalkan niatnya benar dan adabnya terjaga.",
+      "Lanjutkan; seni itu tujuan dakwah, asalkan isinya benar dan adabnya terjaga.",
+      "Lanjutkan; seni itu sarana dakwah terbaik, asalkan isinya benar dan adabnya terjaga."],
+   p:"Bagi Hamzah Fansuri seni adalah sarana, bukan tujuan dan bukan pula sarana yang paling unggul. Syaratnya isi yang benar; isi yang sekadar menarik atau niat yang baik saja belum cukup."},
+4:{o:["Menenangkan kedua pihak, menjelaskan bahwa keduanya punya dasar, lalu bertanya kepada guru PAI.",
+      "Menenangkan kedua pihak, menjelaskan bahwa keduanya sama benarnya, lalu bertanya kepada guru PAI.",
+      "Menenangkan kedua pihak, menjelaskan bahwa keduanya punya dasar, lalu menutup pembahasan itu.",
+      "Menenangkan kedua pihak, menjelaskan bahwa keduanya punya dasar, lalu memilihkan cara yang terkuat.",
+      "Menenangkan pihak yang keliru, menjelaskan bahwa keduanya punya dasar, lalu bertanya kepada guru PAI."],
+   p:"Fajar bukan ahlinya, jadi ia tidak memutuskan mana yang terkuat, tidak memastikan keduanya sama benar, dan tidak menuduh satu pihak keliru. Ia meredakan, memberi pemahaman, lalu merujuk kepada guru."},
+6:{o:["Kurang tepat, sebab dari jauh pun ia dapat mengirimkan karya dan ilmu yang bermanfaat bagi kampungnya.",
+      "Kurang tepat, sebab dari jauh pun ia dapat mengirimkan karya dan ilmu yang mengharumkan nama kampungnya.",
+      "Kurang tepat, sebab dari jauh pun ia dapat menyiapkan karya dan ilmu yang bermanfaat sepulangnya nanti.",
+      "Kurang tepat, sebab dari jauh pun ia dapat mengirimkan kabar dan doa yang menenangkan bagi kampungnya.",
+      "Kurang tepat, sebab dari jauh pun ia dapat mengirimkan karya dan ilmu berbahasa asing bagi kampungnya."],
+   p:"Al-Palimbani mengirimkan karya dari Haramain, dalam bahasa Melayu, supaya langsung bermanfaat bagi umat. Tujuannya manfaat, bukan nama harum; dikirim saat itu, bukan menunggu pulang; dan dalam bahasa yang dipahami."},
+9:{q:"Berdasarkan fakta tersebut, ilmu Syekh Nawawi sampai ke Indonesia terutama …",
+   o:["lewat kitab yang dikaji di pesantren dan murid yang pulang mengajar",
+      "lewat kitab yang dikaji di pesantren dan murid yang menetap di Makkah",
+      "lewat kitab yang ditulisnya di Banten dan murid yang pulang mengajar",
+      "lewat pesantren yang didirikannya dan murid yang pulang mengajar",
+      "lewat kitab yang dikaji di Makkah dan murid yang pulang mengajar"],
+   p:"Kasusnya menyebut dua jalur: kitab yang dikaji di pesantren dan murid-murid yang pulang mengajar. Beliau menulis di Makkah, tidak mendirikan pesantren di tanah air, dan yang membawa ilmunya adalah murid yang pulang."},
+10:{o:["Ilmunya bertambah, tetapi kerendahan hati dan kemauan berbaginya tidak ikut bertambah.",
+       "Ilmunya bertambah, tetapi kemampuan menjelaskan kepada temannya tidak ikut bertambah.",
+       "Ilmunya bertambah, tetapi rasa syukur kepada guru dan sekolahnya tidak ikut bertambah.",
+       "Ilmunya bertambah, tetapi waktu luang untuk membantu temannya tidak ikut bertambah.",
+       "Ilmunya bertambah, tetapi semangat mengejar prestasi berikutnya tidak ikut bertambah."],
+   p:"Kasusnya membandingkan Bima dengan Syekh Nawawi yang makin rendah hati dan giat mengajar. Bima meremehkan dan enggan berbagi; itu soal adab, bukan soal kemampuan menjelaskan, waktu, atau semangat berprestasi."},
+12:{o:["Agar umat memahami Al-Qur’an dalam bahasanya tanpa mudah dihalangi penjajah.",
+       "Agar umat memahami Al-Qur’an dalam bahasanya setelah diizinkan penjajah.",
+       "Agar umat memahami Al-Qur’an dalam bahasanya tanpa perlu belajar kepada guru.",
+       "Agar santri memahami Al-Qur’an dalam bahasanya tanpa diketahui orang awam.",
+       "Agar umat menghafal Al-Qur’an dalam bahasanya tanpa mudah dihalangi penjajah."],
+   p:"Tujuannya pemahaman bagi umat luas, dan pegon adalah cara menyiasati hambatan penjajah. Beliau tidak menunggu izin, tidak menggantikan peran guru, dan tidak membatasi ilmunya untuk santri saja."},
+13:{o:["Berbeda cara tidak memutus persaudaraan, maka kerja sama tetap dijaga.",
+       "Berbeda cara tidak memutus persaudaraan, maka kegiatan sebaiknya dipisah.",
+       "Berbeda cara tidak memutus persaudaraan, maka cara terbanyak yang dipakai.",
+       "Berbeda cara tidak memutus persaudaraan, maka perbedaan tak usah dibicarakan.",
+       "Berbeda cara memang menguji persaudaraan, maka perbedaan sebaiknya dihapus."],
+   p:"Dua murid dari guru yang sama menempuh jalan berbeda dan tetap bersaudara. Maka yang dijaga adalah kerja samanya, bukan memisahkan kegiatan, memaksakan cara mayoritas, menghindari pembicaraan, atau menghapus perbedaan."},
+15:{o:["Karena pengaruhnya ke Nusantara belum terputus selama ia di Sri Lanka.",
+       "Karena pengaruhnya ke Nusantara sudah terputus selama ia di Sri Lanka.",
+       "Karena pengaruhnya ke Nusantara belum terbukti selama ia di Sri Lanka.",
+       "Karena pengaruhnya di Sri Lanka mulai mengancam penguasa setempat.",
+       "Karena pengaruhnya di Afrika Selatan dibutuhkan kaum muslim setempat."],
+   p:"Ia tetap menulis, mengajar, dan dikunjungi jemaah haji Nusantara. Artinya pengasingan pertama belum memutus pengaruhnya ke tanah air, sehingga Belanda menjauhkannya lagi."}
+};
+Object.keys(REVISI3).forEach(function(i){for(var k in REVISI3[i])SOAL[i][k]=REVISI3[i][k]});
+/* Enam kampung mengelilingi Taman Menara. s = nomor soal di tempat itu. */
+var PEL = [
+ {n:"Barus",t:"Syekh Hamzah Fansuri",s:[0,1],tanah:"#f0d089",langit:"#8fd8ff",hias:"palem",dinding:"#fff1d6",atap:"#2a9d8f"},
+ {n:"Aceh",t:"Ar-Raniri dan as-Singkili",s:[2,3,4],tanah:"#8fd16a",langit:"#9be0ff",hias:"cemara",dinding:"#f7ede2",atap:"#1d6f5c"},
+ {n:"Palembang",t:"Syekh Abdus Samad al-Palimbani",s:[5,6,7],tanah:"#7cc98a",langit:"#a6ecf0",hias:"rimbun",dinding:"#e9c46a",atap:"#9c2f2f"},
+ {n:"Banten",t:"Syekh Nawawi al-Bantani",s:[8,9,10],tanah:"#c5e07a",langit:"#c9efff",hias:"padi",dinding:"#fefae0",atap:"#bc6c25"},
+ {n:"Semarang",t:"Kiai Sholeh Darat",s:[11,12,13],tanah:"#e3b47e",langit:"#ffdcae",hias:"taman",dinding:"#ffd9b3",atap:"#c0452f"},
+ {n:"Gowa",t:"Syekh Yusuf al-Makassari",s:[14,15,16],tanah:"#e6c06a",langit:"#ffc49a",hias:"batu",dinding:"#f2e8cf",atap:"#6a4c93"},
+ {n:"Taman Menara",t:"Muara seluruh jejak",s:[17,18,19],tanah:"#e9e2d0",langit:"#a8dcff",hias:"taman",dinding:"#ffffff",atap:"#ff5a5f"}
+];
+var R0=64,PULAU=88;
+/* Pernyataan Benar/Salah untuk duel melawan Bayangan Lupa (tidak dihitung ke nilai ulangan). */
+var BS = [
+ {t:"Syekh Hamzah Fansuri berasal dari Barus.",b:true},
+ {t:"Syair Perahu adalah karya Syekh Nuruddin ar-Raniri.",b:false,k:"Syair Perahu karya Syekh Hamzah Fansuri."},
+ {t:"Tarjuman al-Mustafid ditulis dalam bahasa Melayu.",b:true},
+ {t:"Tarjuman al-Mustafid adalah karya Syekh Abdurrauf as-Singkili.",b:true},
+ {t:"Bustanus Salatin adalah karya Syekh Abdurrauf as-Singkili.",b:false,k:"Bustanus Salatin karya Syekh Nuruddin ar-Raniri."},
+ {t:"Syekh Nuruddin ar-Raniri lahir di Ranir, Gujarat, India.",b:true},
+ {t:"Ar-Raniri menjadi mufti Aceh pada masa Sultan Iskandar Tsani.",b:true},
+ {t:"Hidayatus Salikin adalah karya Syekh Abdus Samad al-Palimbani.",b:true},
+ {t:"Sairus Salikin adalah karya Syekh Nawawi al-Bantani.",b:false,k:"Sairus Salikin karya Syekh Abdus Samad al-Palimbani."},
+ {t:"Syekh Abdus Samad al-Palimbani berasal dari Palembang.",b:true},
+ {t:"Syekh Nawawi al-Bantani lahir di Tanara, Banten.",b:true},
+ {t:"Gelar Sayyid Ulama al-Hijaz dimiliki Syekh Yusuf al-Makassari.",b:false,k:"Gelar itu milik Syekh Nawawi al-Bantani."},
+ {t:"Tafsir al-Munir (Marah Labid) adalah karya Syekh Nawawi al-Bantani.",b:true},
+ {t:"Syekh Nawawi al-Bantani menulis kitab-kitabnya dalam bahasa Jawa.",b:false,k:"Beliau menulis dalam bahasa Arab."},
+ {t:"Tafsir Faidhur Rahman ditulis dengan aksara pegon.",b:true},
+ {t:"Faidhur Rahman adalah tafsir berbahasa Melayu.",b:false,k:"Faidhur Rahman berbahasa Jawa."},
+ {t:"K.H. Hasyim Asy’ari pernah berguru kepada Kiai Sholeh Darat.",b:true},
+ {t:"K.H. Ahmad Dahlan adalah pendiri Nahdlatul Ulama.",b:false,k:"K.H. Ahmad Dahlan mendirikan Muhammadiyah."},
+ {t:"Syekh Yusuf al-Makassari lahir di Gowa.",b:true},
+ {t:"Syekh Yusuf diasingkan ke Afrika Selatan lebih dulu, baru ke Sri Lanka.",b:false,k:"Urutannya Sri Lanka dulu, lalu Afrika Selatan."},
+ {t:"Syekh Yusuf pernah menjadi mufti Kesultanan Banten.",b:true},
+ {t:"Gelar Tuanta Salamaka diberikan kepada Syekh Yusuf al-Makassari.",b:true},
+ {t:"Ulama disebut pewaris para nabi karena mewarisi ilmu mereka.",b:true},
+ {t:"Sebagai pewaris para nabi, ulama berhak menetapkan syariat baru.",b:false,k:"Ulama meneruskan ilmu, bukan membuat syariat baru."},
+ {t:"Syekh Abdurrauf as-Singkili dikenal sebagai Teungku Syiah Kuala.",b:true},
+ {t:"Aksara pegon adalah huruf Latin untuk menulis bahasa Jawa.",b:false,k:"Pegon adalah huruf Arab untuk menulis bahasa Jawa."}
+];
+var WAKTU={I:30,A:30}, DASAR={I:100,A:200};
+var HURUF=["A","B","C","D","E"];
+var GARAM="lentera-barus-1447", AWALAN="JU5-", PIN_GURU="5511";
+var K_GURU="jejakUlama.guru.v2", K_COBA="jejakUlama.coba.v2";
+var WARNA=["#ffd23f","#ff5a5f","#3a86ff","#17c964","#a23bf0","#ffffff"];
+var app=document.getElementById("app");
+var S={layar:"beranda"}, tik=null, raf=0, lepas=null, guruMasuk=false;
+var diam=!!(window.matchMedia&&window.matchMedia("(prefers-reduced-motion:reduce)").matches);
+
+/* ================= ALAT BANTU ================= */
+function h(tag,a,kids){var e=document.createElement(tag);if(a)for(var k in a){if(k==="cls")e.className=a[k];else if(k==="txt")e.textContent=a[k];else if(k==="html")e.innerHTML=a[k];else if(k.slice(0,2)==="on")e.addEventListener(k.slice(2),a[k]);else if(k in e)e[k]=a[k];else e.setAttribute(k,a[k])}
+ (kids||[]).forEach(function(c){if(c)e.appendChild(typeof c==="string"?document.createTextNode(c):c)});return e}
+function acak(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var x=a[i];a[i]=a[j];a[j]=x}return a}
+function ribuan(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,".")}
+function simpan(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){return false}}
+function muat(k,d){try{var v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}}
+function bersih(){if(tik){clearInterval(tik);tik=null}if(raf){cancelAnimationFrame(raf);raf=0}if(lepas){lepas();lepas=null}app.textContent="";window.scrollTo(0,0)}
+function hitungBit(m){var c=0;while(m){c+=m&1;m>>>=1}return c}
+function sidik(s){var x=2166136261;s=GARAM+"|"+s;for(var i=0;i<s.length;i++){x^=s.charCodeAt(i);x=Math.imul(x,16777619)}return (x>>>0).toString(36)}
+function buatKode(arr){var b=btoa(unescape(encodeURIComponent(JSON.stringify(arr)))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");return AWALAN+b+"."+sidik(b)}
+function bacaKode(kode){try{var m=/^JU5-([A-Za-z0-9_-]+)\.([a-z0-9]+)$/.exec(kode);if(!m||sidik(m[1])!==m[2])return null;
+  var b=m[1].replace(/-/g,"+").replace(/_/g,"/");while(b.length%4)b+="=";var a=JSON.parse(decodeURIComponent(escape(atob(b))));
+  if(!Array.isArray(a)||a.length<9)return null;
+  return {kode:kode,nama:String(a[0]),kelas:String(a[1]),absen:String(a[2]),mask:a[3]>>>0,poin:+a[4]||0,durasi:+a[5]||0,karam:+a[6]||0,menit:+a[7]||0,ke:+a[8]||1,benar:hitungBit(a[3]>>>0),nilai:Math.round(hitungBit(a[3]>>>0)/SOAL.length*100)}}catch(e){return null}}
+function salin(teks,tombol,sukses){var kotak=null;
+  function cadangan(){if(!kotak){kotak=h("textarea",{readOnly:true,value:teks,"aria-label":"Teks untuk disalin"});tombol.after(kotak)}kotak.focus();kotak.select();tombol.textContent="Tekan lama teks di bawah"}
+  try{navigator.clipboard.writeText(teks).then(function(){tombol.textContent=sukses},cadangan)}catch(e){cadangan()}}
+function gelar(n){return n>=90?"Penjelajah Legendaris":n>=75?"Penjelajah Jagoan":n>=60?"Penjelajah Tangguh":"Penjelajah Pemula"}
+function jarak(a,b,c,d){return Math.hypot(a-c,b-d)}
+
+/* ================= EFEK: SUARA, PARTIKEL, TEKS MELAYANG ================= */
+var AC=null,bisu=muat("jejakUlama.bisu",false),tSuara=document.getElementById("suara");
+function labelSuara(){tSuara.textContent=bisu?"SUARA OFF":"SUARA ON";tSuara.setAttribute("aria-pressed",String(!bisu))}
+labelSuara();tSuara.addEventListener("click",function(){bisu=!bisu;simpan("jejakUlama.bisu",bisu);labelSuara();bunyi("klik")});
+function bunyi(jenis){if(bisu)return;try{
+  if(!AC){var K=window.AudioContext||window.webkitAudioContext;if(!K)return;AC=new K()}
+  if(AC.state==="suspended")AC.resume();var t=AC.currentTime;
+  function nada(f,d,w,tipe,vol,f2){var o=AC.createOscillator(),g=AC.createGain();o.type=tipe||"square";o.frequency.setValueAtTime(f,t+w);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+w+d);
+    g.gain.setValueAtTime(vol||0.07,t+w);g.gain.exponentialRampToValueAtTime(0.001,t+w+d);o.connect(g);g.connect(AC.destination);o.start(t+w);o.stop(t+w+d+0.03)}
+  if(jenis==="koin"){nada(988,.08,0);nada(1319,.2,.08)}
+  else if(jenis==="benar"){nada(523,.1,0);nada(659,.1,.1);nada(784,.1,.2);nada(1047,.28,.3)}
+  else if(jenis==="salah"){nada(220,.25,0,"sawtooth",.08,110);nada(150,.35,.2,"sawtooth",.08,70)}
+  else if(jenis==="kena"){nada(200,.35,0,"sawtooth",.1,50)}
+  else if(jenis==="bekal"){nada(660,.08,0,"triangle",.12);nada(880,.08,.08,"triangle",.12);nada(1320,.22,.16,"triangle",.12)}
+  else if(jenis==="darat"){nada(392,.12,0,"triangle",.12);nada(523,.12,.12,"triangle",.12);nada(784,.3,.24,"triangle",.12)}
+  else if(jenis==="tik"){nada(1300,.04,0,"square",.04)}
+  else if(jenis==="klik"){nada(620,.06,0,"square",.05)}
+  else if(jenis==="tembak"){nada(900,.25,0,"square",.05,260)}
+  else if(jenis==="bintang"){nada(1047,.18,0,"triangle",.12,1568)}
+  else if(jenis==="menang"){[523,659,784,1047,784,1047,1319].forEach(function(f,i){nada(f,.17,i*.13,"square",.07)})}
+}catch(e){}}
+var fxC=document.getElementById("fx"),fxX=fxC.getContext("2d"),fxP=[],fxRaf=0;
+function fxUkur(){fxC.width=window.innerWidth;fxC.height=window.innerHeight}
+fxUkur();window.addEventListener("resize",fxUkur);
+function fxLoop(){fxRaf=0;fxX.clearRect(0,0,fxC.width,fxC.height);var n=[];
+  for(var i=0;i<fxP.length;i++){var p=fxP[i];p.vy+=p.g;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;p.life--;
+    if(p.life>0&&p.y<fxC.height+30){fxX.save();fxX.globalAlpha=Math.min(1,p.life/18);fxX.translate(p.x,p.y);fxX.rotate(p.r);fxX.fillStyle=p.c;fxX.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.6);fxX.restore();n.push(p)}}
+  fxP=n;if(n.length)fxRaf=requestAnimationFrame(fxLoop)}
+function fxJalan(){if(!fxRaf)fxRaf=requestAnimationFrame(fxLoop)}
+function ledak(x,y,n,warna){if(diam)return;warna=warna||WARNA;for(var i=0;i<n;i++){var a=Math.random()*6.28,v=2+Math.random()*6;
+  fxP.push({x:x,y:y,vx:Math.cos(a)*v,vy:Math.sin(a)*v-2,g:.2,r:Math.random()*6,vr:(Math.random()-.5)*.5,s:5+Math.random()*6,c:warna[i%warna.length],life:38+Math.random()*22})}fxJalan()}
+function konfeti(n){if(diam)return;for(var i=0;i<n;i++)fxP.push({x:Math.random()*fxC.width,y:-10-Math.random()*260,vx:(Math.random()-.5)*2.4,vy:2+Math.random()*3,g:.03,r:Math.random()*6,vr:(Math.random()-.5)*.4,s:7+Math.random()*7,c:WARNA[i%WARNA.length],life:230});fxJalan()}
+function melayang(teks,x,y,besar){var d=h("div",{cls:"melayang"+(besar?" besar":""),txt:teks,style:"left:"+x+"px;top:"+y+"px"});document.body.appendChild(d);setTimeout(function(){d.remove()},1100)}
+function tengah(el){var r=el.getBoundingClientRect();return [r.left+r.width/2,r.top+r.height/2]}
+function gempa(){app.classList.remove("gempa");void app.offsetWidth;app.classList.add("gempa")}
+function kilat(warna){var k=document.getElementById("kilat");k.style.background=warna;if(k.animate&&!diam)k.animate([{opacity:.55},{opacity:0}],{duration:350})}
+function naikAngka(el,dari,ke){if(diam||dari===ke){el.textContent=ribuan(ke);return}var t0=performance.now();
+  (function f(t){var k=Math.min(1,(t-t0)/500);el.textContent=ribuan(Math.round(dari+(ke-dari)*k));if(k<1)requestAnimationFrame(f)})(t0)}
+function lambungEl(baru){var d=h("div",{cls:"lambung"+(baru?" baru":""),role:"img","aria-label":"Nyawa "+S.hull+" dari 3"});for(var i=0;i<3;i++)d.appendChild(h("i",{cls:i<S.hull?"":"rusak",txt:"♥"}));return d}
+var NAMA_BEKAL={l:"Lentera",j:"Jam pasir",p:"Perisai"};
+
+/* ================= SISWA: LAYAR JUDUL ================= */
+function beranda(galat){
+  bersih();S.layar="beranda";
+  function huruf(t){return t.split("").map(function(c,i){return h("span",{txt:c===" "?" ":c,style:"animation-delay:"+(i*0.08)+"s"})})}
+  app.appendChild(h("header",{cls:"logo"},[
+    h("p",{cls:"kecil",style:"align-self:center",txt:"Petualangan 3D · PAI Kelas XI · Bab 5"}),
+    h("h1",{"aria-label":"Ekspedisi"},huruf("EKSPEDISI")),
+    h("h1",{cls:"b",txt:"JEJAK ULAMA"})]));
+  var i1=h("input",{id:"nama",maxLength:40,autocomplete:"name",value:S.nama||""});
+  var i2=h("input",{id:"kelas",maxLength:12,placeholder:"misal XI-3",value:S.kelas||""});
+  var i3=h("input",{id:"absen",inputMode:"numeric",maxLength:3,value:S.absen||""});
+  app.appendChild(h("form",{cls:"kitab",noValidate:true,onsubmit:function(ev){ev.preventDefault();bunyi("klik");
+      S.nama=i1.value.trim();S.kelas=i2.value.trim();S.absen=i3.value.trim();
+      if(!S.nama||!S.kelas){beranda("Eits, isi nama dan kelas dulu biar nilaimu tercatat.");return}mulai()}},[
+    h("h2",{txt:"Siapa penjelajahnya?"}),
+    h("label",null,["Nama lengkap",i1]),
+    h("div",{cls:"baris"},[h("label",null,["Kelas",i2]),h("label",null,["No. absen",i3])]),
+    h("p",{cls:"galat",role:"alert",txt:galat||""}),
+    h("button",{cls:"utama denyut",type:"submit",txt:"MULAI EKSPEDISI!"}),
+    h("details",null,[h("summary",{txt:"Cara main"}),
+      h("ul",{cls:"daftar",style:"margin-top:8px"},[
+      "Sentuh layar lalu geser ke arah mana pun buat jalan. Di laptop pakai tombol panah atau WASD.",
+      "Pulau ini punya enam kampung dan satu taman di tengah. Bebas mau ke mana dulu; lihat peta kecil di pojok kanan.",
+      "Panah kuning menunjuk naskah terdekat yang belum dijawab. Naskah ada di depan rumah-rumah warga.",
+      "Dekati naskah yang bersinar buat membuka soal. Tiap soal cuma 30 detik.",
+      "Naskah di Taman Menara baru kebuka setelah enam kampung selesai.",
+      "Awas Bayangan Lupa! Kalau kamu mendekat, dia berubah warna dan mengejarmu.",
+      "Lawan dengan tombol LEMPAR: bintang ilmu bikin dia pusing 5 detik. Tombol TAMENG melindungimu 3 detik.",
+      "Kalau tertangkap, muncul soal Benar/Salah. Jawab tepat: dia kalah dan kamu dapat +30. Keliru: poin dipotong 50. Batu Ragu di jalan langsung memotong 50, jadi hindari atau pakai tameng.",
+      "Salah jawab atau kehabisan waktu bikin nyawa berkurang. Nyawa habis berarti pingsan: poin dipotong 200 dan kamu balik ke Taman Menara.",
+      "Pungut bintang (+20 poin), hati (+1 nyawa), dan bekal. Jam pasir cuma nambah 10 detik, Lentera membuang 2 jawaban, Perisai menahan 1 kesalahan.",
+      "Nilai ulangan dihitung dari jumlah jawaban benar. Di Menara Lentera, kirim kode laporan ke guru ya."
+      ].map(function(t){return h("li",{txt:t})}))])]));
+  app.appendChild(h("p",{cls:"redup",style:"text-align:center"},[h("a",{href:"#guru",txt:"Ruang Guru"})]));
+}
+function mulai(){
+  S.hull=3;S.poin=0;S.streak=0;S.maxStreak=0;S.mask=0;S.benar=0;S.karam=0;S.bekal={l:1,j:1,p:1};S.bintang=[];
+  S.urut=PEL.map(function(p){return acak(p.s)});S.jawab={};S.ambil={};S.px=0;S.pz=10;S.awal=Date.now();
+  dunia();
+}
+function zonaBeres(i){return PEL[i].s.every(function(id){return S.jawab[id]})}
+function pengali(st){return st>=4?2:st===3?1.5:st===2?1.2:1}
+function bintangEl(b){return h("div",{cls:"bintang3",role:"img","aria-label":b+" dari 3 bintang"},[0,1,2].map(function(i){return h("i",{cls:i<b?"on":"",txt:"★"})}))}
+
+/* ================= SISWA: DUNIA 3D ================= */
+function dunia(){
+  bersih();S.layar="dunia";
+  var cv=h("canvas",{cls:"gl","aria-label":"Dunia petualangan 3D. Geser layar atau pakai tombol panah untuk berjalan."});
+  var gl=cv.getContext("webgl",{antialias:true,alpha:false})||cv.getContext("experimental-webgl");
+  if(!gl){app.appendChild(h("section",{cls:"kitab"},[h("h2",{txt:"Grafis 3D tidak tersedia"}),h("p",{txt:"Perangkat atau browser ini belum mendukung WebGL. Coba buka dengan Chrome versi terbaru atau perangkat lain."}),h("button",{cls:"sekunder",type:"button",txt:"Kembali",onclick:function(){S={layar:"beranda"};beranda()}})]));return}
+
+  /* ---------- HUD ---------- */
+  var peta=h("canvas",{cls:"peta",width:168,height:168,"aria-hidden":"true"});
+  var poinEl=h("span",{txt:ribuan(S.poin)}),lamb=h("span"),zonaEl=h("span"),bekalEl=h("div",{cls:"chip"}),tampil=S.poin;
+  var panahI=h("i"),panahB=h("b"),toastEl=h("div",{cls:"toast",role:"status"}),joy=h("div",{cls:"joy"},[h("i")]),tip=h("div",{cls:"petunjuk-jalan",txt:"Sentuh dan geser buat jalan"});
+  var tBisu=h("button",{cls:"pil mini",type:"button",txt:bisu?"Suara: mati":"Suara: nyala",onclick:function(){tSuara.click();tBisu.textContent=bisu?"Suara: mati":"Suara: nyala"}});
+  var panel=h("div",{cls:"panel"}),duelEl=h("div",{cls:"duel"});
+  var bLempar=h("button",{cls:"aksi-b",type:"button",txt:"LEMPAR"}),bTameng=h("button",{cls:"aksi-b tameng",type:"button",txt:"TAMENG"});
+  bLempar.addEventListener("pointerdown",function(ev){ev.preventDefault();lempar()});bTameng.addEventListener("pointerdown",function(ev){ev.preventDefault();tameng()});
+  var wadah=h("div",{cls:"dunia"},[cv,
+    h("div",{cls:"hud"},[h("div",{cls:"pil"},[lamb]),h("div",{cls:"pil"},[zonaEl]),h("div",{cls:"pil"},[h("small",{txt:"Poin"}),poinEl])]),
+    h("div",{cls:"bar2"},[h("div",{cls:"kiri2"},[bekalEl,tBisu]),peta]),
+    h("div",{cls:"arah"},[panahI,panahB]),toastEl,joy,tip,h("div",{cls:"aksi"},[bTameng,bLempar]),panel,duelEl]);
+  app.appendChild(wadah);
+  function hud(baru){naikAngka(poinEl,tampil,S.poin);tampil=S.poin;lamb.textContent="";lamb.appendChild(lambungEl(baru));
+    var c=0;for(var q in S.jawab)c++;zonaEl.textContent="Naskah "+c+"/"+SOAL.length;
+    bekalEl.textContent="";["l","j","p"].forEach(function(k){bekalEl.appendChild(h("span",{txt:NAMA_BEKAL[k]+" ×"+S.bekal[k]}))})}
+  function pesan(t){toastEl.textContent=t;toastEl.classList.remove("tampil");void toastEl.offsetWidth;toastEl.classList.add("tampil")}
+
+  /* ---------- mesin WebGL mini ---------- */
+  function sh(t,s){var o=gl.createShader(t);gl.shaderSource(o,s);gl.compileShader(o);return o}
+  var pr=gl.createProgram();
+  gl.attachShader(pr,sh(gl.VERTEX_SHADER,"attribute vec3 aP;attribute vec3 aN;uniform mat4 uVP;uniform mat4 uM;uniform vec3 uL;varying float vL;varying float vD;void main(){vec4 w=uM*vec4(aP,1.0);vec3 n=normalize((uM*vec4(aN,0.0)).xyz);vL=0.62+0.42*max(dot(n,uL),0.0)+0.06*n.y;gl_Position=uVP*w;vD=gl_Position.w;}"));
+  gl.attachShader(pr,sh(gl.FRAGMENT_SHADER,"precision mediump float;uniform vec3 uC;uniform vec3 uF;uniform float uE;uniform float uA;varying float vL;varying float vD;void main(){vec3 c=uC*mix(vL,1.15,uE);float f=clamp((vD-26.0)/44.0,0.0,1.0);gl_FragColor=vec4(mix(c,uF,f),uA);}"));
+  gl.bindAttribLocation(pr,0,"aP");gl.bindAttribLocation(pr,1,"aN");gl.linkProgram(pr);gl.useProgram(pr);
+  var uVP=gl.getUniformLocation(pr,"uVP"),uM=gl.getUniformLocation(pr,"uM"),uC=gl.getUniformLocation(pr,"uC"),uF=gl.getUniformLocation(pr,"uF"),uE=gl.getUniformLocation(pr,"uE"),uA=gl.getUniformLocation(pr,"uA");
+  gl.uniform3f(gl.getUniformLocation(pr,"uL"),0.42,0.8,0.43);
+  gl.enableVertexAttribArray(0);gl.enableVertexAttribArray(1);gl.enable(gl.DEPTH_TEST);
+  function geo(a){var b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(a),gl.STATIC_DRAW);return {b:b,n:a.length/6}}
+  function tri(a,p,q,r,c){var ux=q[0]-p[0],uy=q[1]-p[1],uz=q[2]-p[2],vx=r[0]-p[0],vy=r[1]-p[1],vz=r[2]-p[2];
+    var nx=uy*vz-uz*vy,ny=uz*vx-ux*vz,nz=ux*vy-uy*vx,l=Math.hypot(nx,ny,nz)||1;nx/=l;ny/=l;nz/=l;
+    var mx=(p[0]+q[0]+r[0])/3-c[0],my=(p[1]+q[1]+r[1])/3-c[1],mz=(p[2]+q[2]+r[2])/3-c[2];if(nx*mx+ny*my+nz*mz<0){nx=-nx;ny=-ny;nz=-nz}
+    [p,q,r].forEach(function(v){a.push(v[0],v[1],v[2],nx,ny,nz)})}
+  function kotak(y0,y1){var a=[],c=[0,(y0+y1)/2,0],P=function(x,y,z){return [x*0.5,y?y1:y0,z*0.5]};
+    [[[-1,0,-1],[1,0,-1],[1,1,-1],[-1,1,-1]],[[-1,0,1],[1,0,1],[1,1,1],[-1,1,1]],[[-1,0,-1],[-1,0,1],[-1,1,1],[-1,1,-1]],[[1,0,-1],[1,0,1],[1,1,1],[1,1,-1]],[[-1,1,-1],[1,1,-1],[1,1,1],[-1,1,1]],[[-1,0,-1],[1,0,-1],[1,0,1],[-1,0,1]]].forEach(function(f){
+      var v=f.map(function(q){return P(q[0],q[1],q[2])});tri(a,v[0],v[1],v[2],c);tri(a,v[0],v[2],v[3],c)});return geo(a)}
+  function kerucut(n){var a=[],c=[0,0.3,0];for(var i=0;i<n;i++){var p=i/n*6.2832,q=(i+1)/n*6.2832;tri(a,[0,1,0],[Math.cos(p)*0.5,0,Math.sin(p)*0.5],[Math.cos(q)*0.5,0,Math.sin(q)*0.5],c)}return geo(a)}
+  function tabung(n){var a=[],c=[0,0.5,0];for(var i=0;i<n;i++){var p=i/n*6.2832,q=(i+1)/n*6.2832,A=[Math.cos(p)*0.5,0,Math.sin(p)*0.5],B=[Math.cos(q)*0.5,0,Math.sin(q)*0.5],C=[B[0],1,B[2]],D2=[A[0],1,A[2]];
+    tri(a,A,B,C,c);tri(a,A,C,D2,c);tri(a,[0,1,0],D2,C,[0,0,0])}return geo(a)}
+  function bola(){var a=[],N=10,R=7;function pt(i,j){var th=i/R*Math.PI,ph=j/N*6.2832;return [Math.sin(th)*Math.cos(ph)*0.5,Math.cos(th)*0.5,Math.sin(th)*Math.sin(ph)*0.5]}
+    function v(p){a.push(p[0],p[1],p[2],p[0]*2,p[1]*2,p[2]*2)}
+    for(var i=0;i<R;i++)for(var j=0;j<N;j++){var A=pt(i,j),B=pt(i+1,j),C=pt(i+1,j+1),E=pt(i,j+1);v(A);v(B);v(C);v(A);v(C);v(E)}return geo(a)}
+  var G={k:kotak(-0.5,0.5),ka:kotak(0,1),kg:kotak(-1,0),c8:kerucut(8),c4:kerucut(4),t:tabung(10),d:tabung(28),b:bola()};
+  var M=new Float32Array(16),kini=null,warnaCache={};
+  function K(x){var c=warnaCache[x];if(!c){c=warnaCache[x]=[parseInt(x.slice(1,3),16)/255,parseInt(x.slice(3,5),16)/255,parseInt(x.slice(5,7),16)/255]}return c}
+  function kirim(g,c,e,a){if(kini!==g){gl.bindBuffer(gl.ARRAY_BUFFER,g.b);gl.vertexAttribPointer(0,3,gl.FLOAT,false,24,0);gl.vertexAttribPointer(1,3,gl.FLOAT,false,24,12);kini=g}
+    gl.uniformMatrix4fv(uM,false,M);gl.uniform3fv(uC,typeof c==="string"?K(c):c);gl.uniform1f(uE,e||0);gl.uniform1f(uA,a==null?ALFA:a);gl.drawArrays(gl.TRIANGLES,0,g.n)}
+  function D(g,x,y,z,sx,sy,sz,ry,c,e,a){var cs=Math.cos(ry||0),sn=Math.sin(ry||0);M[0]=cs*sx;M[1]=0;M[2]=-sn*sx;M[3]=0;M[4]=0;M[5]=sy;M[6]=0;M[7]=0;M[8]=sn*sz;M[9]=0;M[10]=cs*sz;M[11]=0;M[12]=x;M[13]=y;M[14]=z;M[15]=1;kirim(g,c,e,a)}
+  /* anggota badan: T(pos)·Ry(a)·T(off)·Rx(b)·S, poros di ujung atas */
+  function L(x,y,z,a,ox,oy,oz,b,sx,sy,sz,c){var ca=Math.cos(a),sa=Math.sin(a),cb=Math.cos(b),sb=Math.sin(b);
+    M[0]=sx*ca;M[1]=0;M[2]=-sx*sa;M[3]=0;M[4]=sy*sb*sa;M[5]=sy*cb;M[6]=sy*sb*ca;M[7]=0;M[8]=sz*cb*sa;M[9]=-sz*sb;M[10]=sz*cb*ca;M[11]=0;
+    M[12]=x+ox*ca+oz*sa;M[13]=y+oy;M[14]=z-ox*sa+oz*ca;M[15]=1;kirim(G.kg,c)}
+  function persp(f,as,n,fr){var t=1/Math.tan(f/2);return [t/as,0,0,0,0,t,0,0,0,0,(fr+n)/(n-fr),-1,0,0,2*fr*n/(n-fr),0]}
+  function lihat(e,c){var zx=e[0]-c[0],zy=e[1]-c[1],zz=e[2]-c[2],l=Math.hypot(zx,zy,zz);zx/=l;zy/=l;zz/=l;var xx=zz,xy=0,xz=-zx;l=Math.hypot(xx,xz);xx/=l;xz/=l;var yx=zy*xz-zz*xy,yy=zz*xx-zx*xz,yz=zx*xy-zy*xx;
+    return [xx,yx,zx,0,xy,yy,zy,0,xz,yz,zz,0,-(xx*e[0]+xy*e[1]+xz*e[2]),-(yx*e[0]+yy*e[1]+yz*e[2]),-(zx*e[0]+zy*e[1]+zz*e[2]),1]}
+  function kali(a,b){var o=new Float32Array(16);for(var i=0;i<4;i++)for(var j=0;j<4;j++)o[i*4+j]=a[j]*b[i*4]+a[4+j]*b[i*4+1]+a[8+j]*b[i*4+2]+a[12+j]*b[i*4+3];return o}
+  var dpr=Math.min(1.6,window.devicePixelRatio||1),cw=1,ch=1;
+  function ukur(){cw=cv.clientWidth||320;ch=cv.clientHeight||480;cv.width=Math.round(cw*dpr);cv.height=Math.round(ch*dpr);gl.viewport(0,0,cv.width,cv.height)}
+  ukur();
+
+  /* ---------- isi dunia: pulau dengan enam kampung dan Taman Menara ---------- */
+  function rng(s){return function(){s|=0;s=s+0x6D2B79F5|0;var t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296}}
+  var r=rng(4421),rumah=[],naskah=[],pohon=[],bunga=[],musuh=[],batu=[],benda=[],tabrak=[],jalan=[],lampu=[],taman=[],kolam=[],nb=0,TENGAH=PEL.length-1;
+  PEL.forEach(function(p,i){var a=(i*60+30)*Math.PI/180;p.cx=i<TENGAH?Math.sin(a)*R0:0;p.cz=i<TENGAH?-Math.cos(a)*R0:0});
+  function segJarak(x,z,s){var ax=s[0],az=s[1],bx=s[2]-ax,bz=s[3]-az,t=((x-ax)*bx+(z-az)*bz)/(bx*bx+bz*bz);t=Math.max(0,Math.min(1,t));return Math.hypot(x-ax-bx*t,z-az-bz*t)}
+  function dekatJalan(x,z){var m=99;jalan.forEach(function(s){m=Math.min(m,segJarak(x,z,s))});return m}
+  for(var qi=0;qi<TENGAH;qi++){var qa=PEL[qi],qb=PEL[(qi+1)%TENGAH];jalan.push([0,0,qa.cx,qa.cz]);jalan.push([qa.cx,qa.cz,qb.cx,qb.cz])}
+  function benda1(j,x,z){benda.push({id:nb++,j:j,x:x,z:z})}
+  PEL.forEach(function(p,i){var k,ang,n=p.s.length;
+    if(i<TENGAH){var m=n+3,a0=r()*6.28;
+      for(k=0;k<m;k++){ang=a0+k*6.2832/m;var w=3.5+r()*0.8,hx=p.cx+Math.sin(ang)*11,hz=p.cz+Math.cos(ang)*11;
+        rumah.push({x:hx,z:hz,ry:ang+Math.PI,w:w,h:2.5+r()*0.8,zona:i,v:r()});tabrak.push({x:hx,z:hz,r:w*0.7});
+        if(k<n){var d=11-w*0.5-2.4,nx=p.cx+Math.sin(ang)*d,nz=p.cz+Math.cos(ang)*d;naskah.push({zona:i,id:S.urut[i][k],x:nx,z:nz});tabrak.push({x:nx,z:nz,r:0.75})}}
+      for(k=0;k<12;k++)bunga.push({x:p.cx+(r()*2-1)*2.4,z:p.cz+(r()*2-1)*2.4,c:Math.floor(r()*4)});
+      benda1("j",p.cx,p.cz);
+      for(k=0;k<3;k++){ang=r()*6.28;benda1("bintang",p.cx+Math.sin(ang)*5.2,p.cz+Math.cos(ang)*5.2)}
+      for(k=0;k<18;k++){ang=k/18*6.2832+r()*0.3;var dd=16.5+r()*6,tx=p.cx+Math.sin(ang)*dd,tz=p.cz+Math.cos(ang)*dd;if(dekatJalan(tx,tz)>2.8&&Math.hypot(tx,tz)<PULAU-2)pohon.push({j:p.hias,x:tx,z:tz,s:0.8+r()*0.6,r:r()*6.28,v:r()})}
+      for(k=0;k<2;k++){ang=a0+0.6+k*3.14;musuh.push({hx:p.cx+Math.sin(ang)*4.5,hz:p.cz+Math.cos(ang)*4.5})}
+      for(k=0;k<4;k++){var f=0.38+k*0.09;benda1("bintang",p.cx*f+(k%2?1.1:-1.1)*Math.cos((i*60+30)*0.01745),p.cz*f+(k%2?1.1:-1.1)*Math.sin((i*60+30)*0.01745))}
+      musuh.push({hx:p.cx*0.55+p.cz*0.1,hz:p.cz*0.55-p.cx*0.1});
+      if(i%2===0)batu.push({zona:i,f:r()*6,v:0.2+r()*0.06,x:0,z:0});
+      var q=PEL[(i+1)%TENGAH],mx=(p.cx+q.cx)/2,mz=(p.cz+q.cz)/2;benda1(i%2===0?"hati":i===5?"p":"l",mx,mz);benda1("bintang",mx+2,mz+1);benda1("bintang",mx-2,mz-1);
+      taman.push({x:mx,z:mz});for(k=0;k<10;k++){ang=k*0.6283;bunga.push({x:mx+Math.sin(ang)*4.3,z:mz+Math.cos(ang)*4.3,c:k%4})}
+      musuh.push({hx:p.cx*0.72+q.cx*0.28,hz:p.cz*0.72+q.cz*0.28});musuh.push({hx:p.cx*0.28+q.cx*0.72,hz:p.cz*0.28+q.cz*0.72});
+      var oa=(i*60+30)*0.01745;kolam.push({x:Math.sin(oa+0.52)*(R0*0.55),z:-Math.cos(oa+0.52)*(R0*0.55),s:5+r()*3});tabrak.push({x:kolam[kolam.length-1].x,z:kolam[kolam.length-1].z,r:kolam[kolam.length-1].s*0.5});
+      lampu.push({x:p.cx*0.3+p.cz*0.06,z:p.cz*0.3-p.cx*0.06});lampu.push({x:p.cx*0.68-p.cz*0.05,z:p.cz*0.68+p.cx*0.05})}
+    else{tabrak.push({x:0,z:0,r:2.5});
+      for(k=0;k<n;k++){ang=k*2.094+1.05;var sx=Math.sin(ang)*6.8,sz=Math.cos(ang)*6.8;naskah.push({zona:i,id:S.urut[i][k],x:sx,z:sz});tabrak.push({x:sx,z:sz,r:0.75})}
+      for(k=0;k<26;k++){ang=k/26*6.2832;bunga.push({x:Math.sin(ang)*11,z:Math.cos(ang)*11,c:k%4})}
+      benda1("j",7.5,8);benda1("p",-7.5,8)}});
+  for(var fk=0;fk<460;fk++){var fa=r()*6.2832,fd=Math.sqrt(r())*(PULAU-2),fx=Math.sin(fa)*fd,fz=Math.cos(fa)*fd,ok=fd>15&&dekatJalan(fx,fz)>3.2;
+    PEL.forEach(function(p,i){if(i<TENGAH&&Math.hypot(fx-p.cx,fz-p.cz)<23)ok=false});
+    taman.forEach(function(q){if(Math.hypot(fx-q.x,fz-q.z)<6.5)ok=false});kolam.forEach(function(q){if(Math.hypot(fx-q.x,fz-q.z)<q.s*0.5+1.5)ok=false});
+    if(ok)pohon.push({j:["cemara","rimbun","rumput","rimbun","cemara","batu"][Math.floor(r()*6)],x:fx,z:fz,s:0.8+r()*0.8,r:r()*6.28,v:r()})}
+  musuh.forEach(function(o){o.x=o.hx;o.z=o.hz;o.tx=o.hx;o.tz=o.hz;o.mode=0;o.t=r()*3;o.f=r()*6.28;o.diam=0});
+  function terkunci(st){return st.zona===TENGAH&&!enamBeres()}
+  function enamBeres(){for(var i=0;i<TENGAH;i++)if(!zonaBeres(i))return false;return true}
+  function jumlahJawab(){var c=0;for(var k in S.jawab)c++;return c}
+
+  /* ---------- kendali ---------- */
+  var proyektil=[],cdLempar=0,cdTameng=0,tamengSampai=0,dekBS=acak(BS.map(function(_,n){return n})),iBS=0;
+  var jx=0,jz=0,asal=null,tombol={},jeda=false,hidup=true,last=0,langkahF=0,hadap=Math.PI,kebal=1.5,getar=0,gerak=false,waktuMain=0,kampungKini=-2,langitKini=K(PEL[TENGAH].langit).slice(),petaHit=0;
+  function pos(ev){var q=cv.getBoundingClientRect();return [ev.clientX-q.left,ev.clientY-q.top]}
+  cv.addEventListener("pointerdown",function(ev){if(jeda)return;asal=pos(ev);joy.style.display="block";joy.style.left=asal[0]+"px";joy.style.top=asal[1]+"px";joy.firstChild.style.transform="";tip.style.display="none";try{cv.setPointerCapture(ev.pointerId)}catch(e){}ev.preventDefault()});
+  cv.addEventListener("pointermove",function(ev){if(!asal)return;var p=pos(ev),dx=p[0]-asal[0],dy=p[1]-asal[1],l=Math.hypot(dx,dy),m=Math.min(l,48);if(l>0){dx=dx/l*m;dy=dy/l*m}joy.firstChild.style.transform="translate("+dx+"px,"+dy+"px)";jx=l<8?0:dx/48;jz=l<8?0:dy/48});
+  function lepasJari(){asal=null;jx=jz=0;joy.style.display="none"}
+  cv.addEventListener("pointerup",lepasJari);cv.addEventListener("pointercancel",lepasJari);
+  function kd(ev){if(jeda)return;var k=ev.key.toLowerCase();if(k===" "){lempar();ev.preventDefault();return}if(k==="e"||k==="shift"){tameng();return}if(["arrowup","arrowdown","arrowleft","arrowright","w","a","s","d"].indexOf(k)>=0){tombol[k]=true;tip.style.display="none";ev.preventDefault()}}
+  function ku(ev){tombol[ev.key.toLowerCase()]=false}
+  window.addEventListener("keydown",kd);window.addEventListener("keyup",ku);window.addEventListener("resize",ukur);
+  lepas=function(){hidup=false;window.removeEventListener("keydown",kd);window.removeEventListener("keyup",ku);window.removeEventListener("resize",ukur)};
+
+  function kenaBahaya(nama){if(waktuMain<kebal)return false;kebal=waktuMain+1.8;getar=0.5;S.poin=Math.max(0,S.poin-50);S.streak=0;bunyi("kena");kilat("#ff2d2d");gempa();pesan("Kena "+nama+"! −50 poin");melayang("−50",cw/2,ch*0.55,true);hud();return true}
+  function kampungBeres(i){var b=PEL[i].s.filter(function(id){return S.jawab[id]===1}).length,n=PEL[i].s.length;S.bintang[i]=b===n?3:b===n-1?2:1;
+    setTimeout(function(){bunyi("darat");konfeti(50);var sisa=0;for(var k=0;k<TENGAH;k++)if(!zonaBeres(k))sisa++;
+      pesan(jumlahJawab()>=SOAL.length?"Menara Lentera menyala! Ke menara!":i===TENGAH?"Tinggal sedikit lagi!":sisa?PEL[i].n+" beres! Sisa "+sisa+" kampung.":"Naskah Taman Menara kebuka! Balik ke tengah.")},600)}
+  function lempar(){if(jeda||waktuMain<cdLempar)return;cdLempar=waktuMain+1.5;var dx=Math.sin(hadap),dz=Math.cos(hadap),jd=14;
+    musuh.forEach(function(e){if(e.hilang||e.diam>0)return;var d=Math.hypot(e.x-S.px,e.z-S.pz);if(d<jd){jd=d;dx=(e.x-S.px)/d;dz=(e.z-S.pz)/d}});
+    hadap=Math.atan2(dx,dz);proyektil.push({x:S.px+dx*0.8,z:S.pz+dz*0.8,vx:dx*17,vz:dz*17,l:1.1});bunyi("tembak")}
+  function tameng(){if(jeda||waktuMain<cdTameng)return;tamengSampai=waktuMain+3;cdTameng=waktuMain+12;bunyi("bekal");pesan("Tameng aktif 3 detik!")}
+  function duel(o){
+    jeda=true;lepasJari();tombol={};bunyi("kena");
+    var s=BS[dekBS[iBS++%dekBS.length]],putus=false,t0=Date.now(),bar=h("b"),isi=h("div",{style:"display:flex;flex-direction:column;gap:12px"});
+    function jawab(j){if(putus)return;putus=true;clearInterval(tik);tik=null;var ok=j===s.b,teks;
+      if(ok){S.poin+=30;o.hilang=waktuMain+25;bunyi("benar");ledak(cw/2,ch/2,34);teks="Tepat! Bayangan Lupa kalah. +30 poin"}
+      else{S.poin=Math.max(0,S.poin-50);S.streak=0;o.diam=3;o.mode=2;bunyi("salah");gempa();kilat("#ff2d2d");teks=(j===null?"Waktu habis! ":"Keliru! ")+"−50 poin. Pernyataan itu "+(s.b?"BENAR.":"SALAH. "+(s.k||""))}
+      hud();isi.textContent="";isi.appendChild(h("p",{cls:"vonis "+(ok?"ok":"no"),txt:teks}));
+      var lj=h("button",{cls:"utama",type:"button",txt:"LANJUT",onclick:function(){duelEl.classList.remove("buka");duelEl.textContent="";kebal=waktuMain+2;jeda=false;last=0}});isi.appendChild(lj);lj.focus({preventScroll:true})}
+    isi.appendChild(h("div",{cls:"waktu",style:"flex:none"},[bar]));
+    isi.appendChild(h("div",{cls:"dua"},[h("button",{cls:"utama b",type:"button",txt:"BENAR",onclick:function(){jawab(true)}}),h("button",{cls:"utama s",type:"button",txt:"SALAH",onclick:function(){jawab(false)}})]));
+    duelEl.textContent="";duelEl.appendChild(h("section",{cls:"kitab"},[h("span",{cls:"cap",style:"align-self:center",txt:"Bayangan Lupa menangkapmu! Benar atau salah?"}),h("p",{cls:"pernyataan",txt:s.t}),isi]));duelEl.classList.add("buka");
+    tik=setInterval(function(){var sisa=Math.max(0,10-(Date.now()-t0)/1000);bar.style.transform="scaleX("+sisa/10+")";bar.className=sisa<=3?"genting":"";if(sisa<=0)jawab(null)},100)}
+  function dorong(o,rad){for(var k=0;k<tabrak.length;k++){var c=tabrak[k],dx=o.x-c.x,dz=o.z-c.z,d=Math.hypot(dx,dz),m=c.r+rad;if(d<m&&d>0.001){o.x=c.x+dx/d*m;o.z=c.z+dz/d*m}}}
+
+  /* ---------- logika per bingkai ---------- */
+  var P={x:0,z:0};
+  function langkah(dt){
+    waktuMain+=dt;var t=waktuMain,k,o,i;
+    var mx=jx+(tombol.arrowright||tombol.d?1:0)-(tombol.arrowleft||tombol.a?1:0),mz=jz+(tombol.arrowdown||tombol.s?1:0)-(tombol.arrowup||tombol.w?1:0),l=Math.hypot(mx,mz);
+    gerak=l>0.05;
+    if(gerak){if(l>1){mx/=l;mz/=l}S.px+=mx*7*dt;S.pz+=mz*7*dt;var mau=Math.atan2(mx,mz),d=mau-hadap;while(d>Math.PI)d-=6.2832;while(d<-Math.PI)d+=6.2832;hadap+=d*Math.min(1,dt*12);langkahF+=dt*11}
+    var pr=Math.hypot(S.px,S.pz);if(pr>PULAU){S.px*=PULAU/pr;S.pz*=PULAU/pr}
+    P.x=S.px;P.z=S.pz;dorong(P,0.5);S.px=P.x;S.pz=P.z;
+    /* Bayangan Lupa: berkeliaran, lalu mengejar kalau penjelajah mendekat */
+    var beres=0;for(i=0;i<TENGAH;i++)if(zonaBeres(i))beres++;var vKejar=4.7+beres*0.2;
+    for(k=0;k<musuh.length;k++){o=musuh[k];var dp=Math.hypot(o.x-S.px,o.z-S.pz),dh=Math.hypot(o.x-o.hx,o.z-o.hz),v;
+      if(o.hilang){if(t<o.hilang)continue;o.hilang=0;o.x=o.hx;o.z=o.hz;o.mode=0;dp=99}
+      if(o.diam>0){o.diam-=dt;continue}
+      if(o.mode===1){if(dp>15||dh>30)o.mode=2}
+      else if(dp<9.5&&dh<24&&t>kebal){if(o.mode!==1&&dp<30)bunyi("tik");o.mode=1}
+      if(o.mode===1){o.tx=S.px;o.tz=S.pz;v=vKejar}
+      else if(o.mode===2){o.tx=o.hx;o.tz=o.hz;v=3;if(dh<1)o.mode=0}
+      else{o.t-=dt;if(o.t<=0){o.t=2+Math.random()*3;var a=Math.random()*6.28;o.tx=o.hx+Math.sin(a)*5;o.tz=o.hz+Math.cos(a)*5}v=1.5}
+      var ex=o.tx-o.x,ez=o.tz-o.z,el=Math.hypot(ex,ez);if(el>0.2){o.x+=ex/el*v*dt;o.z+=ez/el*v*dt;o.a=Math.atan2(ex,ez)}
+      dorong(o,0.7);
+      if(dp<1.25&&t>kebal){if(t<tamengSampai){o.diam=3;o.mode=2;kebal=t+0.4;bunyi("bekal");pesan("Ditangkis tameng!")}else{duel(o);return}}}
+    for(k=proyektil.length-1;k>=0;k--){o=proyektil[k];o.x+=o.vx*dt;o.z+=o.vz*dt;o.l-=dt;var kena=false;
+      for(i=0;i<musuh.length&&!kena;i++){var e=musuh[i];if(!e.hilang&&e.diam<=0&&Math.hypot(e.x-o.x,e.z-o.z)<1.35){e.diam=5;e.mode=2;kena=true;S.poin+=10;bunyi("benar");melayang("+10",cw/2,ch*0.42);pesan("Kena! Bayangan pusing 5 detik.");hud()}}
+      if(kena||o.l<=0)proyektil.splice(k,1)}
+    for(k=0;k<batu.length;k++){o=batu[k];var p=PEL[o.zona],u=(t*o.v+o.f)%2,fr=0.34+0.36*(u<1?u:2-u);o.x=p.cx*fr;o.z=p.cz*fr;if(Math.hypot(o.x-S.px,o.z-S.pz)<1.3&&t>=tamengSampai)kenaBahaya("Batu Ragu")}
+    for(k=0;k<benda.length;k++){o=benda[k];if(S.ambil[o.id]||Math.hypot(o.x-S.px,o.z-S.pz)>1.25)continue;S.ambil[o.id]=1;
+      if(o.j==="bintang"){S.poin+=20;bunyi("koin");melayang("+20",cw/2,ch*0.5)}
+      else if(o.j==="hati"){if(S.hull<3){S.hull++;pesan("Nyawa +1!")}else{S.poin+=50;pesan("Nyawa penuh, jadi +50 poin!")}bunyi("bekal")}
+      else{S.bekal[o.j]++;bunyi("bekal");pesan(o.j==="j"?"Dapat Jam pasir (+10 detik)!":"Dapat "+NAMA_BEKAL[o.j]+"!")}
+      ledak(cw/2,ch*0.55,14);hud()}
+    for(k=0;k<naskah.length;k++){o=naskah[k];if(S.jawab[o.id]||Math.hypot(o.x-S.px,o.z-S.pz)>1.75)continue;
+      if(terkunci(o)){if(t>petaHit){petaHit=t+3;pesan("Masih terkunci. Selesaikan enam kampung dulu.")}}else{tanya(o);return}}
+    if(jumlahJawab()>=SOAL.length&&Math.hypot(S.px,S.pz)<3.6){hidup=false;selesai();return}
+    /* nama kampung saat masuk */
+    var kk=-1;for(i=0;i<PEL.length;i++)if(Math.hypot(S.px-PEL[i].cx,S.pz-PEL[i].cz)<(i===TENGAH?13:18))kk=i;
+    if(kk!==kampungKini){kampungKini=kk;if(kk>=0&&t>2)pesan((kk===TENGAH?"":"Kampung ")+PEL[kk].n+" · "+PEL[kk].t)}
+    var tj=K(PEL[kk>=0?kk:TENGAH].langit);for(i=0;i<3;i++)langitKini[i]+=(tj[i]-langitKini[i])*Math.min(1,dt*1.5);
+    /* panah penunjuk: naskah terdekat yang belum dijawab */
+    var tx=0,tz=0,nm="Menara Lentera",jd=1e9;
+    naskah.forEach(function(s){if(S.jawab[s.id]||terkunci(s))return;var d2=Math.hypot(s.x-S.px,s.z-S.pz);if(d2<jd){jd=d2;tx=s.x;tz=s.z;nm="Naskah "+PEL[s.zona].n}});
+    panahI.style.transform="rotate("+(Math.atan2(tx-S.px,-(tz-S.pz))*57.3)+"deg)";panahB.textContent=nm+" · "+Math.round(Math.hypot(tx-S.px,tz-S.pz))+" m";
+  }
+
+  /* ---------- gambar ---------- */
+  var ALFA=1;
+  function hiasan(o,t){var x=o.x,z=o.z,s=o.s;
+    if(o.j==="palem"){D(G.t,x,0,z,0.35*s,4.2*s,0.35*s,0,"#a9743e");for(var q=0;q<5;q++)D(G.c8,x+Math.cos(o.r+q*1.26)*0.9*s,4*s,z+Math.sin(o.r+q*1.26)*0.9*s,2.2*s,0.5*s,0.9*s,-(o.r+q*1.26),"#3fb56b");D(G.b,x,4.1*s,z,0.8*s,0.7*s,0.8*s,0,"#2f9a57")}
+    else if(o.j==="cemara"){D(G.t,x,0,z,0.4*s,1.2*s,0.4*s,0,"#8a5a34");D(G.c8,x,1*s,z,2.6*s,2.4*s,2.6*s,o.r,"#2f8f4e");D(G.c8,x,2.4*s,z,2*s,2.2*s,2*s,o.r,"#39a85c");D(G.c8,x,3.7*s,z,1.3*s,1.9*s,1.3*s,o.r,"#48bf6d")}
+    else if(o.j==="rimbun"){D(G.t,x,0,z,0.5*s,2*s,0.5*s,0,"#7d5230");D(G.b,x,3*s,z,3*s,2.6*s,3*s,0,"#2e9d5b");D(G.b,x+0.9*s,2.5*s,z+0.5*s,2*s,1.8*s,2*s,0,"#3bb56c")}
+    else if(o.j==="padi"){if(o.v>0.5){for(var w=0;w<3;w++)D(G.c8,x+w*0.5-0.5,0,z+(w%2)*0.4,0.35,1.1*s,0.35,0,"#e7c94d")}else{D(G.t,x,0,z,0.3*s,2.4*s,0.3*s,0,"#8a5a34");D(G.b,x,2.9*s,z,2.2*s,1.8*s,2.2*s,0,"#55b84f")}}
+    else if(o.j==="taman"){D(G.t,x,0,z,0.3*s,1.5*s,0.3*s,0,"#7d5230");D(G.b,x,2*s,z,1.9*s,1.9*s,1.9*s,0,"#4cc38a");D(G.b,x,3.1*s,z,1.3*s,1.3*s,1.3*s,0,"#63d39b");D(G.b,x+0.5*s,2.3*s,z+0.7*s,0.3,0.3,0.3,0,"#ff8fab",0.6)}
+    else if(o.j==="batu"){if(o.v>0.55){D(G.t,x,0,z,0.3*s,1.6*s,0.3*s,0,"#7d5230");D(G.b,x,2.2*s,z,2.8*s,1.1*s,2.8*s,0,"#8fae3f")}else D(G.b,x,0.4*s,z,2.2*s,1.4*s,1.8*s,o.r,"#b08d57")}
+    else if(o.j==="rumput"){D(G.c8,x,0,z,0.4,0.8*s,0.4,0,"#3da35d");D(G.c8,x+0.3,0,z+0.15,0.3,0.6*s,0.3,0,"#58c472");D(G.b,x-0.3,0.25,z+0.2,0.28,0.28,0.28,0,"#ffd23f",0.5)}}
+  function gbrRumah(o){var p=PEL[o.zona],w=o.w,cs=Math.cos(o.ry),sn=Math.sin(o.ry),hw=w/2+0.03;
+    function lok(lx,lz){return [o.x+cs*lx+sn*lz,o.z-sn*lx+cs*lz]}
+    D(G.ka,o.x,0,o.z,w,o.h,w,o.ry,p.dinding);D(G.c4,o.x,o.h,o.z,w*1.55,1.7,w*1.55,o.ry+0.785,p.atap);
+    var q=lok(0,hw);D(G.ka,q[0],0,q[1],0.95,1.6,0.1,o.ry,"#6b4226");q=lok(0,hw+0.5);D(G.ka,q[0],0,q[1],1.6,0.12,1,o.ry,"#cfc6ae");
+    q=lok(-w*0.3,hw);D(G.k,q[0],1.45,q[1],0.6,0.6,0.08,o.ry,"#bdefff",0.5);q=lok(w*0.3,hw);D(G.k,q[0],1.45,q[1],0.6,0.6,0.08,o.ry,"#bdefff",0.5);
+    q=lok(w*0.28,-w*0.2);D(G.ka,q[0],o.h+0.3,q[1],0.45,1.3,0.45,o.ry,"#b08968")}
+  function orang(x,z,t){var a=hadap,ay=gerak?Math.abs(Math.sin(langkahF))*0.12:Math.sin(t*2)*0.02,sw=gerak?Math.sin(langkahF)*0.8:0;
+    L(x,0.95+ay,z,a,-0.17,0,0,sw,0.24,0.95,0.26,"#34406b");L(x,0.95+ay,z,a,0.17,0,0,-sw,0.24,0.95,0.26,"#34406b");
+    D(G.ka,x,0.92+ay,z,0.66,0.82,0.4,a,"#2ec4b6");
+    D(G.k,x-Math.sin(a)*0.3,1.35+ay,z-Math.cos(a)*0.3,0.5,0.6,0.24,a,"#c96f2e");
+    L(x,1.68+ay,z,a,-0.44,0,0,-sw,0.2,0.75,0.22,"#f5f0e1");L(x,1.68+ay,z,a,0.44,0,0,sw,0.2,0.75,0.22,"#f5f0e1");
+    D(G.b,x,2.06+ay,z,0.56,0.56,0.56,a,"#f2c79a");D(G.t,x,2.2+ay,z,0.56,0.24,0.56,a,"#1b1f3b");
+    D(G.b,x+Math.sin(a)*0.24-Math.cos(a)*0.1,2.08+ay,z+Math.cos(a)*0.24+Math.sin(a)*0.1,0.08,0.1,0.08,0,"#1b1f3b");D(G.b,x+Math.sin(a)*0.24+Math.cos(a)*0.1,2.08+ay,z+Math.cos(a)*0.24-Math.sin(a)*0.1,0.08,0.1,0.08,0,"#1b1f3b")}
+  function tampak(o){var dx=o.x-S.px,dz=o.z-S.pz;return dx>-36&&dx<36&&dz<24&&dz>-62}
+  function halang(o,l){var dz=o.z-S.pz;return dz>0.4&&dz<14&&Math.abs(o.x-S.px)<l+dz*0.12}
+  function gambar(t){
+    var lg=langitKini;gl.clearColor(lg[0],lg[1],lg[2],1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.uniform3fv(uF,lg);
+    var gx=0,gy=0;if(getar>0){gx=(Math.random()-0.5)*getar;gy=(Math.random()-0.5)*getar}
+    var as=cw/ch,eye=[S.px+gx,(as<0.8?11.5:9.5)+gy,S.pz+(as<0.8?13.5:11.5)],ctr=[S.px,1.3,S.pz-3.2];
+    gl.uniformMatrix4fv(uVP,false,kali(persp(as<0.8?1.05:0.9,as,0.3,120),lihat(eye,ctr)));
+    gl.disable(gl.BLEND);gl.depthMask(true);ALFA=1;
+    var i,k,o,p;
+    D(G.kg,0,-0.25,0,500,1,500,0,"#2f9fd6");D(G.d,0,-1,0,(PULAU+4.5)*2,1,(PULAU+4.5)*2,0,"#f3dfa2");D(G.d,0,-1,0,(PULAU+1)*2,1.02,(PULAU+1)*2,0,"#6cc24a");
+    for(i=0;i<PEL.length;i++){p=PEL[i];D(G.d,p.cx,-1,p.cz,i===TENGAH?27:37,1.04,i===TENGAH?27:37,0,p.tanah);
+      if(i<TENGAH){D(G.d,p.cx,-1,p.cz,7.6,1.1,7.6,0,"#fffdf3");D(G.d,p.cx,-1,p.cz,7,1.12,7,0,"#57b85c")}}
+    for(k=0;k<jalan.length;k++){o=jalan[k];var dx=o[2]-o[0],dz=o[3]-o[1];D(G.kg,(o[0]+o[2])/2,0.08,(o[1]+o[3])/2,3.3,1,Math.hypot(dx,dz),Math.atan2(dx,dz),"#eadfbe")}
+    for(k=0;k<kolam.length;k++){o=kolam[k];if(tampak(o)){D(G.d,o.x,-1,o.z,o.s+0.8,1.05,o.s+0.8,0,"#f3dfa2");D(G.d,o.x,-1,o.z,o.s,1.07,o.s,0,"#3aa7d9")}}
+    for(k=0;k<taman.length;k++){o=taman[k];if(!tampak(o))continue;D(G.d,o.x,-1,o.z,10.4,1.05,10.4,0,"#fffdf3");D(G.d,o.x,-1,o.z,9.8,1.07,9.8,0,"#7bd389");
+      for(i=0;i<4;i++)D(G.t,o.x+(i%2?1.7:-1.7),0,o.z+(i<2?1.7:-1.7),0.22,2.6,0.22,0,"#fffdf3");
+      if(!halang(o,3))D(G.c4,o.x,2.6,o.z,5.6,1.5,5.6,0.785,"#ff8fab");D(G.ka,o.x,0,o.z-2.6,2.2,0.5,0.6,0,"#b08968")}
+    /* menara dan taman tengah */
+    D(G.t,0,0,0,3.6,7.5,3.6,0,"#fff7e0");D(G.t,0,2.4,0,3.7,1,3.7,0,"#ff5a5f");D(G.t,0,5,0,3.7,1,3.7,0,"#ff5a5f");D(G.t,0,7.5,0,4.4,0.4,4.4,0,"#34406b");
+    var nyala=jumlahJawab()>=SOAL.length;D(G.b,0,8.7,0,1.9,1.9,1.9,t,nyala?"#ffd23f":"#9aa3b8",nyala?1:0);D(G.c8,0,9.5,0,3.8,1.9,3.8,0,"#c0452f");
+    for(k=0;k<bunga.length;k++){o=bunga[k];if(!tampak(o))continue;D(G.c8,o.x,0,o.z,0.3,0.5,0.3,0,"#3da35d");D(G.b,o.x,0.6+Math.sin(t*2+k)*0.04,o.z,0.36,0.36,0.36,0,["#ff5a5f","#ffd23f","#ff8fab","#ffffff"][o.c],0.5)}
+    for(k=0;k<lampu.length;k++){o=lampu[k];if(!tampak(o))continue;D(G.t,o.x,0,o.z,0.16,3,0.16,0,"#34406b");D(G.b,o.x,3.2,o.z,0.55,0.55,0.55,0,"#fff3a0",1)}
+    for(k=0;k<pohon.length;k++){o=pohon[k];if(tampak(o)&&!halang(o,2.2))hiasan(o,t)}
+    for(k=0;k<rumah.length;k++){o=rumah[k];if(tampak(o)&&!halang(o,o.w*0.9+0.8))gbrRumah(o)}
+    for(k=0;k<naskah.length;k++){o=naskah[k];if(!tampak(o))continue;var st=S.jawab[o.id],kn=terkunci(o);
+      D(G.ka,o.x,0,o.z,1.3,0.9,1.3,0.4,"#cfc6ae");D(G.ka,o.x,0.9,o.z,1.0,0.15,1.0,0.4,"#b7ad92");
+      if(st)D(G.k,o.x,1.2,o.z,0.95,0.18,0.7,0.4,st===1?"#17c964":"#e23b3b",0.5);
+      else if(kn)D(G.k,o.x,1.2,o.z,0.95,0.18,0.7,0.4,"#8d93a8");
+      else{D(G.k,o.x,1.9+Math.sin(t*3+k)*0.18,o.z,0.95,0.2,0.7,t*1.6,"#ffd23f",0.9);D(G.k,o.x,1.9+Math.sin(t*3+k)*0.18,o.z,0.78,0.24,0.6,t*1.6,"#fffdf3",0.6)}}
+    for(k=0;k<benda.length;k++){o=benda[k];if(S.ambil[o.id]||!tampak(o))continue;var by=1+Math.sin(t*3+o.id)*0.15,rr=t*2.4+o.id;
+      if(o.j==="bintang"){D(G.c4,o.x,by,o.z,0.6,0.45,0.6,rr,"#ffd23f",0.8);D(G.c4,o.x,by,o.z,0.6,-0.45,0.6,rr,"#ffb703",0.8)}
+      else if(o.j==="j"){D(G.c8,o.x,by+0.42,o.z,0.6,-0.42,0.6,rr,"#3a86ff",0.5);D(G.c8,o.x,by-0.42,o.z,0.6,0.42,0.6,rr,"#3a86ff",0.5);D(G.t,o.x,by+0.42,o.z,0.7,0.08,0.7,rr,"#1b1f3b");D(G.t,o.x,by-0.5,o.z,0.7,0.08,0.7,rr,"#1b1f3b")}
+      else if(o.j==="hati"){D(G.b,o.x-0.16,by+0.1,o.z,0.42,0.42,0.3,0,"#ff5a5f",0.6);D(G.b,o.x+0.16,by+0.1,o.z,0.42,0.42,0.3,0,"#ff5a5f",0.6);D(G.c4,o.x,by+0.02,o.z,0.62,-0.5,0.3,0.785,"#ff5a5f",0.6)}
+      else{D(G.k,o.x,by,o.z,0.7,0.5,0.55,rr,o.j==="l"?"#ff8c1a":"#a23bf0",0.4);D(G.k,o.x,by+0.3,o.z,0.76,0.14,0.6,rr,"#ffd23f",0.7)}}
+    for(k=0;k<proyektil.length;k++){o=proyektil[k];D(G.c4,o.x,1.4,o.z,0.7,0.5,0.7,t*14,"#ffd23f",1);D(G.c4,o.x,1.4,o.z,0.7,-0.5,0.7,t*14,"#fff3a0",1)}
+    for(k=0;k<musuh.length;k++){o=musuh[k];if(o.hilang||!tampak(o))continue;var kj=o.mode===1,my=(o.diam>0?0.55:0.9)+Math.sin(t*(kj?9:4)+o.f)*0.15,a=o.a||0,sx=Math.sin(a),cz=Math.cos(a),bd=kj?"#b5179e":o.diam>0?"#8d93a8":"#4b3b8f",sk=o.diam>0?0.7:1;
+      D(G.b,o.x,my,o.z,1.5*sk,1.4*sk,1.5*sk,0,bd);D(G.c8,o.x-cz*0.4,my+0.5*sk,o.z+sx*0.4,0.4,0.6,0.4,0,bd);D(G.c8,o.x+cz*0.4,my+0.5*sk,o.z-sx*0.4,0.4,0.6,0.4,0,bd);
+      D(G.b,o.x+sx*0.6-cz*0.26,my+0.12,o.z+cz*0.6+sx*0.26,0.36,0.4,0.3,0,kj?"#ffe66d":"#ffffff",1);D(G.b,o.x+sx*0.6+cz*0.26,my+0.12,o.z+cz*0.6-sx*0.26,0.36,0.4,0.3,0,kj?"#ffe66d":"#ffffff",1);
+      D(G.b,o.x+sx*0.74-cz*0.26,my+0.1,o.z+cz*0.74+sx*0.26,0.16,0.18,0.14,0,"#1b1f3b");D(G.b,o.x+sx*0.74+cz*0.26,my+0.1,o.z+cz*0.74-sx*0.26,0.16,0.18,0.14,0,"#1b1f3b");
+      if(kj)D(G.c4,o.x,my+1.5+Math.sin(t*10)*0.1,o.z,0.4,-0.7,0.4,t*3,"#ff5a5f",1)}
+    for(k=0;k<batu.length;k++){o=batu[k];if(!tampak(o))continue;D(G.b,o.x,0.95,o.z,1.9,1.9,1.9,t*4,"#8d8478");D(G.b,o.x+Math.sin(t*4)*0.5,1.2,o.z+Math.cos(t*4)*0.5,0.7,0.7,0.7,0,"#a59c8f")}
+    if(!(waktuMain<kebal&&Math.floor(t*10)%2&&getar>0))orang(S.px,S.pz,t);
+    for(k=0;k<6;k++){var ax=((k*41+t*1.5)%160)-80+S.px*0.5,az=S.pz-30+k*9;D(G.b,ax,20+k%3*2,az,8,2,3.6,0,"#ffffff",1);D(G.b,ax+2.8,20.7+k%3*2,az,4.5,2,2.8,0,"#ffffff",1)}
+    /* tembus pandang: bayangan, sinar, dan bangunan yang menghalangi pandangan */
+    gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.depthMask(false);
+    D(G.t,S.px,0.1,S.pz,1,0.02,1,0,"#1b1f3b",0,0.3);
+    for(k=0;k<musuh.length;k++){o=musuh[k];if(!o.hilang&&tampak(o))D(G.t,o.x,0.1,o.z,1.5,0.02,1.5,0,"#1b1f3b",0,0.28)}
+    if(waktuMain<tamengSampai)D(G.b,S.px,1.2,S.pz,3.4,3.4,3.4,t*2,"#7fe3ff",1,0.3+Math.sin(t*10)*0.06);
+    for(k=0;k<batu.length;k++){o=batu[k];if(tampak(o))D(G.t,o.x,0.1,o.z,1.9,0.02,1.9,0,"#1b1f3b",0,0.28)}
+    for(k=0;k<naskah.length;k++){o=naskah[k];if(!S.jawab[o.id]&&!terkunci(o)&&tampak(o))D(G.t,o.x,0.9,o.z,1.1,10,1.1,0,"#ffe680",1,0.22+Math.sin(t*4+k)*0.06)}
+    if(nyala)D(G.t,0,8.5,0,2.8,30,2.8,0,"#fff3a0",1,0.3);
+    ALFA=0.28;
+    for(k=0;k<pohon.length;k++){o=pohon[k];if(tampak(o)&&halang(o,2.2))hiasan(o,t)}
+    for(k=0;k<rumah.length;k++){o=rumah[k];if(tampak(o)&&halang(o,o.w*0.9+0.8))gbrRumah(o)}
+    ALFA=1;gl.depthMask(true);
+  }
+  /* ---------- peta kecil ---------- */
+  var px2=peta.getContext("2d");
+  function gambarPeta(){var W=peta.width,s=W/((PULAU+6)*2),c=W/2;px2.clearRect(0,0,W,W);
+    px2.fillStyle="#6cc24a";px2.strokeStyle="#1b1f3b";px2.lineWidth=3;px2.beginPath();px2.arc(c,c,(PULAU+2)*s,0,6.3);px2.fill();px2.stroke();
+    px2.strokeStyle="#eadfbe";px2.lineWidth=4;jalan.forEach(function(j){px2.beginPath();px2.moveTo(c+j[0]*s,c+j[1]*s);px2.lineTo(c+j[2]*s,c+j[3]*s);px2.stroke()});
+    PEL.forEach(function(p,i){px2.fillStyle=zonaBeres(i)?"#17c964":i===TENGAH&&!enamBeres()?"#8d93a8":"#ffd23f";px2.strokeStyle="#1b1f3b";px2.lineWidth=2;px2.beginPath();px2.arc(c+p.cx*s,c+p.cz*s,i===TENGAH?7:9,0,6.3);px2.fill();px2.stroke()});
+    px2.fillStyle="#b5179e";musuh.forEach(function(o){if(o.mode===1&&!o.hilang){px2.beginPath();px2.arc(c+o.x*s,c+o.z*s,4,0,6.3);px2.fill()}});
+    px2.fillStyle="#fff";px2.strokeStyle="#1b1f3b";px2.lineWidth=2.5;px2.beginPath();px2.arc(c+S.px*s,c+S.pz*s,5.5,0,6.3);px2.fill();px2.stroke()}
+  var hitungB=0;
+  function bingkai(ts){if(!hidup)return;var dt=last?Math.min(0.05,(ts-last)/1000):0;last=ts;if(getar>0)getar=Math.max(0,getar-dt);
+    if(!jeda){langkah(dt);if(!hidup)return}gambar(ts/1000);if(++hitungB%6===0){gambarPeta();bLempar.classList.toggle("dingin",waktuMain<cdLempar);var sd=cdTameng-waktuMain;bTameng.classList.toggle("dingin",sd>0);bTameng.textContent=sd>0?"TAMENG "+Math.ceil(sd):"TAMENG"}raf=requestAnimationFrame(bingkai)}
+
+  /* ---------- soal di atas dunia ---------- */
+  function tanya(st){
+    jeda=true;lepasJari();tombol={};bunyi("darat");
+    var p=PEL[st.zona],id=st.id,d=SOAL[id],batas=WAKTU[d.j];
+    var opsi=acak(d.o.map(function(t,k){return {t:t,benar:k===0}}));
+    var dijawab=false,perisai=false,mulaiT=Date.now(),detikLalu=99;
+    var wb=h("b"),det=h("span",{cls:"detik",txt:String(batas)}),wbar=h("div",{cls:"waktu-baris"},[h("div",{cls:"waktu"},[wb]),det]);
+    var tombolJ=[],pl=h("div",{cls:"pilihan"});
+    opsi.forEach(function(o,n){var b=h("button",{type:"button",onclick:function(){jawab(n)}},[h("span",{cls:"h",txt:HURUF[n]}),h("span",{txt:o.t})]);tombolJ.push(b);pl.appendChild(b)});
+    var bL=h("button",{type:"button",disabled:!S.bekal.l,onclick:function(){if(dijawab||!S.bekal.l)return;S.bekal.l--;bunyi("bekal");
+        var salah=[];opsi.forEach(function(o,n){if(!o.benar)salah.push(n)});acak(salah).slice(0,2).forEach(function(n){var c=tengah(tombolJ[n]);ledak(c[0],c[1],10,["#ff8c1a","#ffd23f"]);tombolJ[n].classList.add("hilang");tombolJ[n].disabled=true});
+        bL.disabled=true;bL.lastChild.textContent="sisa "+S.bekal.l}},["Lentera",h("span",{txt:"sisa "+S.bekal.l})]);
+    var bJ=h("button",{type:"button",disabled:!S.bekal.j,onclick:function(){if(dijawab||!S.bekal.j)return;S.bekal.j--;batas+=10;bunyi("bekal");var c=tengah(det);melayang("+10 detik",c[0]-40,c[1]+10);bJ.lastChild.textContent="sisa "+S.bekal.j;if(!S.bekal.j)bJ.disabled=true}},["Jam pasir +10",h("span",{txt:"sisa "+S.bekal.j})]);
+    var bP=h("button",{type:"button",disabled:!S.bekal.p,onclick:function(){if(dijawab||!S.bekal.p||perisai)return;S.bekal.p--;perisai=true;bunyi("bekal");bP.disabled=true;bP.classList.add("pasang");bP.lastChild.textContent="terpasang"}},["Perisai",h("span",{txt:"sisa "+S.bekal.p})]);
+    var k=h("section",{cls:"kitab"},[
+      h("span",{cls:"cap"+(d.j==="I"?" ingat":""),txt:(d.j==="I"?"Ingatan":"Studi kasus")+" · "+p.t}),
+      d.k?h("p",{cls:"kasus",txt:d.k}):null,
+      h("p",{cls:"soal",txt:d.q}),pl,
+      h("div",{cls:"bekal"},[bL,bJ,bP])]);
+    panel.textContent="";panel.appendChild(h("div",{cls:"judul-soal",txt:"Naskah "+p.n+" ditemukan!"}));panel.appendChild(wbar);panel.appendChild(k);panel.classList.add("buka");panel.scrollTop=0;
+    tik=setInterval(function(){var sisa=Math.max(0,batas-(Date.now()-mulaiT)/1000),dk=Math.ceil(sisa);
+      wb.style.transform="scaleX("+Math.min(1,sisa/WAKTU[d.j])+")";wb.className=sisa<=8?"genting":"";wbar.classList.toggle("genting",sisa<=8);det.textContent=String(dk);
+      if(dk!==detikLalu){detikLalu=dk;if(dk<=5&&dk>0)bunyi("tik")}
+      if(sisa<=0)jawab(-1)},100);
+    function jawab(n){
+      if(dijawab)return;dijawab=true;clearInterval(tik);tik=null;wbar.classList.remove("genting");
+      var sisa=Math.max(0,batas-(Date.now()-mulaiT)/1000),ok=n>=0&&opsi[n].benar,dapat=0,teks,pingsan=false;
+      if(ok){S.streak++;if(S.streak>S.maxStreak)S.maxStreak=S.streak;S.benar++;S.mask|=(1<<id);S.jawab[id]=1;
+        dapat=Math.round(DASAR[d.j]*(1+0.5*Math.min(1,sisa/WAKTU[d.j]))*pengali(S.streak)/5)*5;S.poin+=dapat;
+        teks="Mantap, itu yang paling tepat! +"+dapat+" poin";bunyi("benar");var c=tengah(wbar);ledak(c[0],c[1]+80,34);melayang("+"+dapat,c[0],c[1]+40,true);
+        if(S.streak>=2)setTimeout(function(){melayang("KOMBO ×"+pengali(S.streak)+"!",cw/2,90,true)},450)}
+      else{S.streak=0;S.jawab[id]=2;
+        if(perisai){teks=(n<0?"Waktu habis! ":"Yah, belum tepat. ")+"Untung perisaimu menahan.";bunyi("bekal")}
+        else{S.hull--;bunyi("salah");gempa();kilat("#ff2d2d");teks=(n<0?"Waktu habis! ":"Yah, belum tepat. ")+"Nyawa berkurang.";
+          if(S.hull<=0){pingsan=true;S.karam++;S.poin=Math.max(0,S.poin-200);S.hull=3;teks+=" Kamu pingsan! Poin dipotong 200 dan kamu dibawa kembali ke Taman Menara."}}}
+      tombolJ.forEach(function(b,x){b.disabled=true;if(opsi[x].benar){b.classList.remove("hilang");b.classList.add("benar")}else if(x===n)b.classList.add("salah")});
+      bL.disabled=bJ.disabled=bP.disabled=true;hud(!ok&&!perisai);
+      var beres=zonaBeres(st.zona);
+      var lj=h("button",{cls:"utama",type:"button",txt:"LANJUT JALAN",onclick:function(){bunyi("klik");panel.classList.remove("buka");panel.textContent="";
+        if(pingsan){S.px=0;S.pz=10}
+        if(beres)kampungBeres(st.zona);kebal=waktuMain+2;jeda=false;last=0}});
+      var u=h("div",{cls:"ulasan"},[h("p",{cls:"vonis "+(ok?"ok":"no"),txt:teks}),h("p",{txt:d.p}),lj]);
+      k.appendChild(u);lj.focus({preventScroll:true});u.scrollIntoView({block:"nearest",behavior:"smooth"});
+    }
+  }
+  hud();pesan(jumlahJawab()?"Lanjutkan ekspedisimu!":"Jelajahi kampung! Naskah ada di depan rumah.");
+  raf=requestAnimationFrame(bingkai);
+}
+
+/* ================= SISWA: HASIL ================= */
+function selesai(){
+  S.nilai=Math.round(S.benar/SOAL.length*100);S.durasi=Math.round((Date.now()-S.awal)/1000);
+  var coba=muat(K_COBA,{}),kunci=(S.nama+"|"+S.kelas).toLowerCase();coba[kunci]=(coba[kunci]||0)+1;S.ke=coba[kunci];simpan(K_COBA,coba);
+  S.kode=buatKode([S.nama,S.kelas,S.absen,S.mask,S.poin,S.durasi,S.karam,Math.floor(Date.now()/60000),S.ke]);
+  var g=muat(K_GURU,[]);if(g.indexOf(S.kode)<0){g.push(S.kode);simpan(K_GURU,g)}
+  hasil(true);
+}
+function teksLaporan(){var m=Math.floor(S.durasi/60),d=S.durasi%60;
+  return "LAPORAN EKSPEDISI JEJAK ULAMA\nUlangan Harian PAI & BP Kelas XI Bab 5\nNama: "+S.nama+"\nKelas: "+S.kelas+(S.absen?" / Absen "+S.absen:"")+
+  "\nNilai: "+S.nilai+" (benar "+S.benar+" dari "+SOAL.length+")\nPoin: "+ribuan(S.poin)+"\nWaktu: "+m+" menit "+d+" detik\nPercobaan ke-"+S.ke+"\nKode laporan:\n"+S.kode}
+function hasil(pesta){
+  bersih();S.layar="hasil";
+  var bt=S.bintang.reduce(function(a,b){return a+(b||0)},0);
+  app.appendChild(h("header",{cls:"logo"},[h("p",{cls:"kecil",style:"align-self:center",txt:"Ekspedisi selesai!"}),h("h1",{txt:gelar(S.nilai)})]));
+  var nilaiEl=h("div",{cls:"nilai-besar",txt:String(S.nilai)}),poinEl=h("b",{txt:ribuan(S.poin)});
+  var sal=h("button",{cls:"utama denyut",type:"button",txt:"SALIN LAPORAN",onclick:function(){bunyi("klik");salin(teksLaporan(),sal,"TERSALIN! KIRIM KE GURU")}});
+  app.appendChild(h("section",{cls:"kitab"},[
+    h("p",{style:"text-align:center;font-weight:800",txt:S.nama+" · "+S.kelas+(S.absen?" · absen "+S.absen:"")}),
+    h("span",{cls:"kecil",style:"align-self:center",txt:"Nilai ulangan"}),nilaiEl,
+    h("div",{cls:"ringkas"},[
+      h("div",null,[h("b",{txt:S.benar+"/"+SOAL.length}),h("span",{txt:"jawaban benar"})]),
+      h("div",null,[poinEl,h("span",{txt:"poin"})]),
+      h("div",null,[h("b",{txt:bt+"/"+PEL.length*3}),h("span",{txt:"bintang"})])]),
+    h("p",{txt:"Pingsan "+S.karam+" kali. Kombo terpanjang: "+S.maxStreak+". Percobaan ke-"+S.ke+"."}),
+    h("h3",{txt:"Kode laporan"}),
+    h("p",{txt:"Nilaimu baru masuk kalau kode ini sampai ke guru. Salin, lalu kirim sesuai arahan guru ya."}),
+    h("div",{cls:"kode",txt:S.kode}),sal]));
+  var salah=[];for(var i=0;i<SOAL.length;i++)if(!(S.mask&(1<<i)))salah.push(i);
+  if(salah.length){app.appendChild(h("section",{cls:"kitab"},[h("h2",{txt:"Yang perlu dipelajari lagi"}),
+    h("ol",{cls:"daftar"},salah.map(function(i){return h("li",null,[h("div",{txt:SOAL[i].q}),h("div",{style:"font-weight:800;color:var(--benar)",txt:"Jawaban: "+SOAL[i].o[0]})])}))]))}
+  app.appendChild(h("button",{cls:"sekunder",type:"button",txt:"Penjelajah berikutnya",onclick:function(){S={layar:"beranda"};beranda()}}));
+  if(pesta){bunyi("menang");konfeti(160);if(!diam){nilaiEl.textContent="0";var t0=performance.now();(function f(t){var k=Math.min(1,(t-t0)/1400);nilaiEl.textContent=String(Math.round(S.nilai*k));if(k<1)requestAnimationFrame(f)})(t0);naikAngka(poinEl,0,S.poin)}}
+}
+
+/* ================= GURU ================= */
+function guruGerbang(galat){
+  bersih();
+  app.appendChild(h("header",null,[h("p",{cls:"kecil",txt:"Jejak Ulama Nusantara"}),h("h1",{txt:"Ruang Guru"})]));
+  var pin=h("input",{id:"pin",type:"password",inputMode:"numeric",maxLength:8,autocomplete:"off"});
+  app.appendChild(h("form",{cls:"kitab",noValidate:true,onsubmit:function(ev){ev.preventDefault();if(pin.value.trim()===PIN_GURU){guruMasuk=true;guruPanel()}else guruGerbang("PIN keliru. Coba lagi.")}},[
+    h("label",null,["PIN guru",pin]),h("p",{cls:"galat",role:"alert",txt:galat||""}),
+    h("button",{cls:"utama",type:"submit",txt:"Masuk"})]));
+  app.appendChild(h("p",{cls:"redup"},[h("a",{href:"#siswa",txt:"Ke tampilan siswa"})]));
+}
+function guruPanel(pesan){
+  bersih();
+  var kodes=muat(K_GURU,[]),data=kodes.map(bacaKode).filter(Boolean);
+  var kkm=muat("jejakUlama.kkm",75);
+  data.sort(function(a,b){return a.kelas.localeCompare(b.kelas)||(parseInt(a.absen,10)||999)-(parseInt(b.absen,10)||999)||a.nama.localeCompare(b.nama)});
+  app.appendChild(h("header",null,[h("p",{cls:"kecil",txt:"Ruang Guru · tersimpan di perangkat ini"}),h("h1",{txt:"Pantauan nilai"})]));
+
+  var ta=h("textarea",{id:"tempel",placeholder:"Tempel kode laporan atau seluruh pesan siswa di sini. Boleh banyak sekaligus."});
+  app.appendChild(h("section",{cls:"kitab"},[h("h2",{txt:"Masukkan laporan siswa"}),ta,
+    h("p",{cls:"galat",role:"status",style:"color:var(--soga)",txt:pesan||""}),
+    h("button",{cls:"utama",type:"button",txt:"Tambahkan ke pantauan",onclick:function(){
+      var temu=ta.value.match(/JU5-[A-Za-z0-9_-]+\.[a-z0-9]+/g)||[],baru=0,rusak=0,k=muat(K_GURU,[]);
+      temu.forEach(function(c){if(!bacaKode(c)){rusak++;return}if(k.indexOf(c)<0){k.push(c);baru++}});
+      simpan(K_GURU,k);
+      guruPanel(temu.length?baru+" laporan baru ditambahkan"+(rusak?", "+rusak+" kode tidak sah ditolak":"")+(temu.length-baru-rusak>0?", "+(temu.length-baru-rusak)+" sudah ada":"")+".":"Tidak ada kode laporan dalam teks itu.")}})]));
+
+  if(!data.length){app.appendChild(h("section",{cls:"kitab"},[h("p",{txt:"Belum ada laporan. Minta siswa menekan “Salin laporan untuk guru” di akhir permainan, lalu tempel kiriman mereka di atas."})]))}
+  else{
+    var nilai=data.map(function(r){return r.nilai}),rata=Math.round(nilai.reduce(function(a,b){return a+b},0)/nilai.length*10)/10,tuntas=nilai.filter(function(v){return v>=kkm}).length;
+    var iK=h("input",{id:"kkm",inputMode:"numeric",maxLength:3,value:String(kkm),style:"max-width:90px",onchange:function(){var v=parseInt(iK.value,10);if(v>=0&&v<=100){simpan("jejakUlama.kkm",v);guruPanel()}}});
+    var tb=h("table");tb.appendChild(h("tr",null,[["Kelas",""],["Abs","n"],["Nama",""],["Nilai","n"],["Tepat","n"],["Poin","n"],["Pingsan","n"],["Menit","n"],["Ke","n"],["",""]].map(function(x){return h("th",{cls:x[1],txt:x[0]})})));
+    data.forEach(function(r){tb.appendChild(h("tr",null,[
+      h("td",{txt:r.kelas}),h("td",{cls:"n",txt:r.absen||"-"}),h("td",{txt:r.nama}),
+      h("td",{cls:"n "+(r.nilai>=kkm?"tuntas":"kurang"),txt:String(r.nilai)}),h("td",{cls:"n",txt:r.benar+"/"+SOAL.length}),
+      h("td",{cls:"n",txt:ribuan(r.poin)}),h("td",{cls:"n",txt:String(r.karam)}),h("td",{cls:"n",txt:String(Math.round(r.durasi/60))}),h("td",{cls:"n",txt:String(r.ke)}),
+      h("td",null,[h("button",{type:"button","aria-label":"Hapus laporan "+r.nama,txt:"Hapus",onclick:function(){simpan(K_GURU,muat(K_GURU,[]).filter(function(c){return c!==r.kode}));guruPanel()}})])]))});
+    var sal=h("button",{cls:"utama",type:"button",txt:"Salin rekap nilai",onclick:function(){
+      salin("Kelas\tAbsen\tNama\tNilai\tTepat\tPoin\tPingsan\tMenit\tPercobaan\n"+data.map(function(r){return [r.kelas,r.absen,r.nama,r.nilai,r.benar,r.poin,r.karam,Math.round(r.durasi/60),r.ke].join("\t")}).join("\n"),sal,"Rekap tersalin, tempel di Excel atau Sheets")}});
+    var yakin=false,hp=h("button",{cls:"sekunder",type:"button",txt:"Hapus semua laporan",onclick:function(){if(!yakin){yakin=true;hp.textContent="Tekan sekali lagi untuk menghapus";return}simpan(K_GURU,[]);guruPanel()}});
+    app.appendChild(h("section",{cls:"kitab"},[h("h2",{txt:"Rekap kelas"}),
+      h("div",{cls:"ringkas"},[
+        h("div",null,[h("b",{txt:String(data.length)}),h("span",{txt:"laporan"})]),
+        h("div",null,[h("b",{txt:String(rata).replace(".",",")}),h("span",{txt:"rata-rata"})]),
+        h("div",null,[h("b",{txt:tuntas+"/"+data.length}),h("span",{txt:"tuntas"})])]),
+      h("p",{txt:"Tertinggi "+Math.max.apply(null,nilai)+", terendah "+Math.min.apply(null,nilai)+"."}),
+      h("label",null,["Batas tuntas (KKM)",iK]),
+      h("div",{cls:"gulung"},[tb]),sal,hp]));
+
+    var butir=h("div",{cls:"butir"});
+    SOAL.forEach(function(s,i){var c=data.filter(function(r){return r.mask&(1<<i)}).length,pr=Math.round(c/data.length*100),pel="";
+      PEL.forEach(function(p){if(p.s.indexOf(i)>=0)pel=p.n});
+      butir.appendChild(h("div",{cls:"b"},[
+        h("div",{cls:"atas"},[h("span",{txt:(i+1)+". "+pel+" · "+(s.j==="I"?"ingatan":"analisis")}),h("span",{txt:pr+"% tepat"})]),
+        h("div",{cls:"batang"},[h("i",{cls:pr<50?"sulit":"",style:"width:"+pr+"%"})]),
+        h("div",{txt:s.q}),h("div",{cls:"kunci",txt:"Kunci: "+s.o[0]})]))});
+    app.appendChild(h("section",{cls:"kitab"},[h("h2",{txt:"Analisis butir soal"}),h("p",{txt:"Batang merah menandai soal yang dijawab tepat oleh kurang dari separuh siswa."}),butir]));
+  }
+  app.appendChild(h("p",{cls:"redup"},[h("a",{href:"#siswa",txt:"Ke tampilan siswa"})]));
+}
+
+
+/* ================= RUTE & MULAI ================= */
+function arah(){
+  if(location.hash==="#guru"){if(guruMasuk)guruPanel();else guruGerbang();return}
+  if(S.layar==="dunia"&&S.awal&&S.urut)dunia();
+  else if(S.layar==="hasil"&&S.kode)hasil();
+  else beranda();
+}
+function boot(d){if(d&&d.layar)S=d;arah()}
+window.addEventListener("hashchange",arah);
+var hot=window.claude&&window.claude.hot;
+if(hot&&hot.snapshot){try{hot.snapshot(function(){return S})}catch(e){}}
+if(hot&&hot.ready){hot.ready(boot)}else{boot((hot&&hot.data)||{})}
+</script>
+</body>
+</html>
